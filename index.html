@@ -29,7 +29,6 @@
       --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
     }
 
-    /* Dark Mode Variables */
     body.dark-mode {
       --bg-cream: #0f172a;
       --card-bg: #1e293b;
@@ -68,7 +67,6 @@
       margin: 0 auto;
     }
 
-    /* Header & Logo */
     header {
       text-align: center;
       margin-bottom: 25px;
@@ -103,10 +101,6 @@
       backdrop-filter: blur(5px);
     }
 
-    .theme-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
     .logo-img {
       width: 95px;
       height: 95px;
@@ -123,7 +117,6 @@
       font-size: 2.4rem;
       margin-bottom: 2px;
       color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     header p {
@@ -141,7 +134,6 @@
       border: 1px solid var(--border-color);
     }
 
-    /* Announcement Banner */
     .announcement-card {
       background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
       border: 2px dashed var(--gold-accent);
@@ -164,10 +156,6 @@
       line-height: 1;
     }
 
-    .announcement-content {
-      flex: 1;
-    }
-
     .announcement-content h4 {
       color: var(--gold-hover);
       font-size: 1.1rem;
@@ -186,7 +174,6 @@
       line-height: 1.5;
     }
 
-    /* Welcome Card for Teacher */
     .welcome-card {
       background: linear-gradient(135deg, #10b981 0%, #047857 100%);
       color: white;
@@ -208,12 +195,37 @@
       color: #ffffff;
     }
 
-    /* Auth Screens */
     .auth-card {
-      max-width: 420px;
-      margin: 30px auto;
+      max-width: 450px;
+      margin: 20px auto;
       text-align: center;
-      padding: 35px 25px;
+      padding: 30px 25px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      background: none;
+      border: none;
+      font-weight: bold;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .auth-tab.active {
+      background-color: var(--emerald-light);
+      color: var(--emerald-dark);
+      border: 1px solid var(--emerald-primary);
     }
 
     .form-group {
@@ -245,6 +257,23 @@
       box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
     }
 
+    .alert-notice {
+      background-color: #fffbeb;
+      border: 1px solid var(--gold-accent);
+      color: var(--gold-hover);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: right;
+    }
+
+    body.dark-mode .alert-notice {
+      background-color: #451a03;
+      color: #fde047;
+    }
+
     .btn {
       width: 100%;
       padding: 12px 20px;
@@ -262,17 +291,24 @@
       background-color: var(--emerald-dark);
     }
 
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--emerald-primary);
+      border: 2px solid var(--emerald-primary);
+      margin-top: 12px;
+    }
+
     .btn-danger {
       background-color: var(--danger-color);
       color: white;
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    /* Dashboard UI */
     .dashboard-header {
       display: flex;
       justify-content: space-between;
@@ -280,6 +316,8 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .logout-btn {
@@ -301,7 +339,7 @@
     .group-title {
       font-family: 'Amiri', serif;
       color: var(--emerald-dark);
-      font-size: 1.9rem;
+      font-size: 1.8rem;
     }
 
     .timer-box {
@@ -312,12 +350,6 @@
       border-radius: 12px;
       margin-bottom: 20px;
       text-align: center;
-    }
-
-    .timer-box h3 {
-      color: var(--emerald-dark);
-      margin-bottom: 6px;
-      font-size: 1.05rem;
     }
 
     .timer-display {
@@ -378,7 +410,6 @@
       color: var(--text-dark);
     }
 
-    /* Leaderboard & Students List */
     .leaderboard-section {
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -413,25 +444,14 @@
       border: 1px solid var(--border-color);
     }
 
+    .leaderboard-item.highlight {
+      background-color: var(--emerald-light);
+      border-color: var(--emerald-primary);
+    }
+
     .teacher-group-card {
       border: 2px solid var(--emerald-primary);
       margin-bottom: 25px;
-    }
-
-    .add-student-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .add-student-box input {
-      flex: 1;
-    }
-
-    .add-student-box button {
-      width: auto;
-      padding: 0 20px;
-      white-space: nowrap;
     }
 
     .order-btn-group {
@@ -454,7 +474,23 @@
       justify-content: center;
     }
 
-    /* Toast Notification for Auto-Save */
+    .dev-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .dev-table th, .dev-table td {
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      text-align: right;
+    }
+
+    .dev-table th {
+      background-color: var(--emerald-light);
+      color: var(--emerald-dark);
+    }
+
     #toast {
       position: fixed;
       bottom: 25px;
@@ -498,27 +534,74 @@
       <p>منصة المتابعة والمراجعة اللحظية</p>
     </header>
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="card auth-card">
-      <h2 style="color: var(--emerald-dark); margin-bottom: 20px; font-family: 'Amiri', serif; font-size: 1.8rem;">تسجيل الدخول</h2>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="password">كلمة المرور:</label>
-          <input type="password" id="password" placeholder="أدخل كلمة المرور الخاصة بك" required>
-        </div>
-        <button type="submit" class="btn">دخول</button>
-      </form>
-      <p id="login-error" style="color: var(--danger-color); margin-top: 12px; display: none; font-weight: bold;">كلمة المرور غير صحيحة!</p>
-    </div>
-
-    <!-- شاشة عرض الطالب / المجموعة -->
-    <div id="student-screen" class="card hidden">
-      <div class="dashboard-header">
-        <h2 id="student-group-name" class="group-title">اسم المجموعة</h2>
-        <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+    <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
+    <div id="auth-screen" class="card auth-card">
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+        <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">حساب جديد ✨</button>
       </div>
 
-      <!-- بار التنبيهات الموحد للطلاب -->
+      <!-- نموذج تسجيل الدخول -->
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-username">اسم الحساب:</label>
+          <input type="text" id="login-username" placeholder="أدخل اسمك المسجل به" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">كلمة المرور:</label>
+          <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
+        </div>
+        <button type="submit" class="btn">دخول للحساب 🚀</button>
+      </form>
+
+      <!-- نموذج إنشاء حساب جديد -->
+      <form id="register-form" class="hidden">
+        <div class="alert-notice">
+          ⚠️ تنبيه هام: يرجى حفظ اسم الحساب وكلمة المرور جيداً لتتمكن من الدخول منهما لاحقاً.
+        </div>
+        <div class="form-group">
+          <label for="reg-username">اسم الطالب الثلاثي:</label>
+          <input type="text" id="reg-username" placeholder="مثال: محمد أحمد علي" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">إنشاء كلمة مرور:</label>
+          <input type="password" id="reg-password" placeholder="اختر كلمة مرور سهلة للحفظ" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-group">اختر مجموعتك الدراسية:</label>
+          <select id="reg-group" required>
+            <option value="kid1">المجموعة الأولى</option>
+            <option value="mid2">المجموعة الثانية</option>
+            <option value="pro3">المجموعة الثالثة</option>
+            <option value="extra4">المجموعة الأكبر</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">إنشاء الحساب الآن ✨</button>
+      </form>
+
+      <p id="auth-error" style="color: var(--danger-color); margin-top: 12px; display: none; font-weight: bold;"></p>
+
+      <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border-color);">
+      
+      <button onclick="showTeacherLoginPrompt()" class="btn btn-secondary">صفحة المعلمة 🌸</button>
+    </div>
+
+    <!-- شاشة البروفايل الخاص بالطالب -->
+    <div id="student-screen" class="card hidden">
+      <div class="dashboard-header">
+        <div>
+          <h2 id="student-welcome" class="group-title">أهلاً بك 🌸</h2>
+          <p id="student-group-name" style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;"></p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button onclick="requestNotificationPermission()" class="logout-btn" style="background-color: #fef3c7; color: #b45309; border-color: #f59e0b;">تفعيل التنبيهات 🔔</button>
+          <button onclick="changeGroupPrompt()" class="logout-btn" style="background-color: var(--emerald-light); color: var(--emerald-dark); border-color: var(--emerald-primary);">تغيير المجموعة 🔄</button>
+          <button onclick="deleteAccountSelf()" class="btn-danger">حذف حسابي 🗑️</button>
+          <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <!-- بار التنبيهات الموحد -->
       <div id="student-announcement-box" class="announcement-card hidden">
         <div class="announcement-icon">📢</div>
         <div class="announcement-content">
@@ -550,7 +633,6 @@
 
     <!-- شاشة المعلمة -->
     <div id="teacher-screen" class="hidden">
-      <!-- كارت الترحيب بالمعلمة أسماء -->
       <div class="welcome-card">
         <div class="welcome-info">
           <h2>أهلاً وسهلاً أستاذة أسماء 🌸</h2>
@@ -559,28 +641,51 @@
         <button onclick="logout()" class="logout-btn" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">تسجيل الخروج</button>
       </div>
 
-      <!-- كارت إدارة الإعلانات والتنبيهات العامة الموحدة -->
       <div class="card" style="border: 2px dashed var(--gold-accent); background: var(--input-bg);">
         <h3 style="color: var(--gold-hover); font-family: 'Amiri', serif; font-size: 1.5rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           📢 شريط الإعلانات والتنبيهات العام (يظهر لجميع المجاميع)
         </h3>
         <div class="form-group" style="margin-bottom: 0;">
-          <textarea id="teacher-announcement-input" rows="2" placeholder="اكتبي هنا أي تنبيه عام أو إعلان ترغبين في ظهوره لجميع الطلاب..." oninput="autoSaveGlobalAnnouncement()"></textarea>
+          <textarea id="teacher-announcement-input" rows="2" placeholder="اكتبي هنا أي تنبيه عام..." oninput="autoSaveGlobalAnnouncement()"></textarea>
         </div>
       </div>
 
       <div id="teacher-groups-container"></div>
     </div>
+
+    <!-- الصفحة السرية للمطور (Developer Center) -->
+    <div id="developer-screen" class="card hidden">
+      <div class="dashboard-header">
+        <h2 class="group-title" style="color: var(--gold-hover);">🛠️ لوحة تحكم المطور السرية (Developer)</h2>
+        <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+      </div>
+
+      <p style="margin-bottom: 15px; font-weight: bold;">إدارة كافة حسابات المنصة، كشف كلمات السر، التعديل أو الطرد النهائي:</p>
+
+      <div style="overflow-x: auto;">
+        <table class="dev-table">
+          <thead>
+            <tr>
+              <th>اسم الحساب</th>
+              <th>كلمة السر 🔑</th>
+              <th>المجموعة</th>
+              <th>إجراءات والتعديل ⚙️</th>
+            </tr>
+          </thead>
+          <tbody id="dev-users-table">
+            <!-- سيتم تحميل الحسابات هنا -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast">✨ تم حفظ التعديلات تلقائياً</div>
+  <div id="toast">✨ تم الحفظ بنجاح</div>
 
-  <!-- 1. مكتبات Firebase Compat -->
+  <!-- Firebase Compat Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-  <!-- 2. التهيئة والتطوير -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDH2BqQV-mbFkkFfbq5ciHy91nUY7MWZh0",
@@ -595,47 +700,38 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // إعدادات المجاميع مع تفريغ تام لأي أسماء قديمة
     const groupsConfig = {
-      'kid1': {
-        name: "المجموعة الأولى",
-        pass: "kid",
-        time: "18:00",
-        heroCount: 1,
-        heroTitle: "بطل الشهر 🏆",
-        defaultStudents: ["دارين محمود", "زين معتز", "عدي أحمد", "فيروز علي"]
-      },
-      'mid2': {
-        name: "المجموعة الثانية",
-        pass: "mid",
-        time: "18:00",
-        heroCount: 1,
-        heroTitle: "بطل الشهر 🏆",
-        defaultStudents: ["كمال ممدوح", "روفيدة ممدوح", "كنزي محمد", "يوسف محمد"]
-      },
-      'pro3': {
-        name: "المجموعة الثالثة",
-        pass: "pro",
-        time: "18:00",
-        heroCount: 2,
-        heroTitle: "أبطال الشهر 🏆",
-        defaultStudents: ["مروان أيمن", "شيرين أيمن", "ريناد محمود", "محمد محمود", "ملك أحمد", "جودي معتز"]
-      },
-      'extra4': {
-        name: "المجموعة الأكبر",
-        pass: "extra",
-        time: "17:00",
-        heroCount: 1,
-        heroTitle: "بطل الشهر 🏆",
-        defaultStudents: ["طالب 1", "طالب 2", "طالب 3"]
-      }
+      'kid1': { name: "المجموعة الأولى", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
+      'mid2': { name: "المجموعة الثانية", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
+      'pro3': { name: "المجموعة الثالثة", time: "18:00", heroCount: 2, heroTitle: "أبطال الشهر 🏆" },
+      'extra4': { name: "المجموعة الأكبر", time: "17:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" }
     };
 
+    let currentUser = null;
     let teacherState = {};
     let activeIntervals = {};
     let saveDebounceTimers = {};
     let globalAnnouncementTimer = null;
 
-    // Dark Mode Toggle
+    // تنظيف القوائم القديمة تلقائياً من الفايربيس
+    function purgeOldDataFromDatabase() {
+      const oldNames = ["دارين محمود", "زين معتز", "عدي أحمد", "فيروز علي", "كمال ممدوح", "روفيدة ممدوح", "كنزي محمد", "يوسف محمد", "مروان أيمن", "شيرين أيمن", "ريناد محمود", "محمد محمود", "ملك أحمد", "جودي معتز", "طالب 1", "طالب 2", "طالب 3"];
+      
+      for (let gKey in groupsConfig) {
+        db.ref(`groups/${gKey}/leaderboard`).once('value', (snap) => {
+          let lb = snap.val() || [];
+          if (Array.isArray(lb)) {
+            let filtered = lb.filter(name => !oldNames.includes(name));
+            if (filtered.length !== lb.length) {
+              db.ref(`groups/${gKey}/leaderboard`).set(filtered);
+            }
+          }
+        });
+      }
+    }
+    purgeOldDataFromDatabase();
+
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
       const isDark = document.body.classList.contains('dark-mode');
@@ -644,66 +740,236 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
-    // Load Saved Theme
     if (localStorage.getItem('theme') === 'dark') {
       toggleDarkMode();
     }
 
-    // Show Toast
     function showToast(message) {
       const toast = document.getElementById('toast');
       toast.innerText = message;
       toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
+      setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const pass = document.getElementById('password').value.trim();
-      document.getElementById('login-error').style.display = 'none';
-
-      if (pass === 'dev') {
-        showTeacherDashboard();
-      } else {
-        let foundGroup = null;
-        for (let gKey in groupsConfig) {
-          if (groupsConfig[gKey].pass === pass) {
-            foundGroup = gKey;
-            break;
+    // نظام التنبيهات التشجيعية اليومية
+    function requestNotificationPermission() {
+      if ("Notification" in window) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            showToast("🔔 تم تفعيل التنبيهات بنجاح!");
+            sendMotivationNotification("أهلاً بك! ✨", "تم تفعيل التنبيهات التشجيعية اليومية لمساعدتك في حفظ القرآن الكريم.");
+          } else {
+            alert("يرجى إعطاء الصلاحية من إعدادات المتصفح لترسل لك المنصة التنبيهات اليومية.");
           }
-        }
-        if (foundGroup) {
-          showStudentDashboard(foundGroup);
+        });
+      } else {
+        alert("متصفحك لا يدعم التنبيهات المباشرة.");
+      }
+    }
+
+    function sendMotivationNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, {
+          body: body,
+          icon: "logo.jpg"
+        });
+      }
+    }
+
+    // جدولة تنبيه تشجيعي يومي
+    function scheduleDailyMotivationalNotice() {
+      const messages = [
+        "📖 قال النبي ﷺ: (خيركم من تعلم القرآن وعلمه) - لا تنسَ وردك اليوم!",
+        "✨ قليلٌ دائم خيرٌ من كثيرٍ منقطع.. حافظ على مراجعة آياتك اليوم.",
+        "🌸 القرآن نور صدرك وجلاء حزنك.. ابدأ بقراءة حظبك اليومي الآن.",
+        "🏆 من أحسن الصبر على حفظ القرآن ارتقى به في أعالي الجنان!"
+      ];
+      
+      setInterval(() => {
+        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        sendMotivationNotification("تذكير القرآن الكريم 📖", randomMsg);
+      }, 24 * 60 * 60 * 1000); // كل 24 ساعة
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('auth-error').style.display = 'none';
+      if (tab === 'login') {
+        document.getElementById('tab-login').classList.add('active');
+        document.getElementById('tab-register').classList.remove('active');
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('register-form').classList.add('hidden');
+      } else {
+        document.getElementById('tab-register').classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+        document.getElementById('register-form').classList.remove('hidden');
+        document.getElementById('login-form').classList.add('hidden');
+      }
+    }
+
+    // Auto Login Check
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('ahl_quran_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        if (currentUser.role === 'developer') {
+          showDeveloperDashboard();
+        } else if (currentUser.role === 'teacher') {
+          showTeacherDashboard();
         } else {
-          document.getElementById('login-error').style.display = 'block';
+          showStudentDashboard(currentUser.group, currentUser.name);
         }
       }
     });
 
+    // Login Form
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const errEl = document.getElementById('auth-error');
+      errEl.style.display = 'none';
+
+      if (username === 'developer' && pass === 'developer') {
+        currentUser = { name: 'Developer', role: 'developer' };
+        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+        showDeveloperDashboard();
+        return;
+      }
+
+      db.ref('users/' + username).once('value', (snapshot) => {
+        const user = snapshot.val();
+        if (user && user.pass === pass) {
+          currentUser = { name: username, group: user.group, role: 'student' };
+          localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+          showStudentDashboard(user.group, username);
+        } else {
+          errEl.innerText = "اسم الحساب أو كلمة المرور غير صحيحة!";
+          errEl.style.display = 'block';
+        }
+      });
+    });
+
+    // Register Form
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value.trim();
+      const pass = document.getElementById('reg-password').value.trim();
+      const groupKey = document.getElementById('reg-group').value;
+      const errEl = document.getElementById('auth-error');
+      errEl.style.display = 'none';
+
+      if (username.toLowerCase() === 'developer') {
+        errEl.innerText = "هذا الاسم محجوز للنظام!";
+        errEl.style.display = 'block';
+        return;
+      }
+
+      db.ref('users/' + username).once('value', (snapshot) => {
+        if (snapshot.exists()) {
+          errEl.innerText = "هذا الاسم مسجل بالفعل! يرجى اختيار اسم آخر أو تسجيل الدخول.";
+          errEl.style.display = 'block';
+        } else {
+          db.ref('users/' + username).set({ pass: pass, group: groupKey }).then(() => {
+            db.ref(`groups/${groupKey}/leaderboard`).once('value', (lbSnap) => {
+              let currentLb = lbSnap.val() || [];
+              if (!currentLb.includes(username)) {
+                currentLb.push(username);
+                db.ref(`groups/${groupKey}/leaderboard`).set(currentLb);
+              }
+            });
+
+            currentUser = { name: username, group: groupKey, role: 'student' };
+            localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+            showStudentDashboard(groupKey, username);
+            showToast("✨ تم إنشاء حسابك بنجاح!");
+          });
+        }
+      });
+    });
+
+    function showTeacherLoginPrompt() {
+      const pass = prompt("أدخلي كلمة مرور المعلمة:");
+      if (pass === 'dev') {
+        currentUser = { role: 'teacher' };
+        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+        showTeacherDashboard();
+      } else if (pass !== null) {
+        alert("كلمة المرور غير صحيحة!");
+      }
+    }
+
     function logout() {
-      document.getElementById('password').value = '';
-      document.getElementById('login-screen').classList.remove('hidden');
+      localStorage.removeItem('ahl_quran_user');
+      currentUser = null;
+      document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('student-screen').classList.add('hidden');
       document.getElementById('teacher-screen').classList.add('hidden');
+      document.getElementById('developer-screen').classList.add('hidden');
       for (let key in activeIntervals) clearInterval(activeIntervals[key]);
     }
 
-    function showStudentDashboard(gKey) {
-      document.getElementById('login-screen').classList.add('hidden');
+    function deleteAccountSelf() {
+      if (confirm("هل أنت متأكد من حذف حسابك نهائياً؟ ستفقد الوصول ولن تتمكن من الاسترجاع.")) {
+        const uName = currentUser.name;
+        const gKey = currentUser.group;
+
+        db.ref('users/' + uName).remove().then(() => {
+          db.ref(`groups/${gKey}/leaderboard`).once('value', (snap) => {
+            let lb = snap.val() || [];
+            lb = lb.filter(item => item !== uName);
+            db.ref(`groups/${gKey}/leaderboard`).set(lb);
+          });
+          showToast("تم حذف الحساب بنجاح");
+          logout();
+        });
+      }
+    }
+
+    function changeGroupPrompt() {
+      const newGroup = prompt("اختر مجموعتك الجديدة:\n1. kid1 (المجموعة الأولى)\n2. mid2 (المجموعة الثانية)\n3. pro3 (المجموعة الثالثة)\n4. extra4 (المجموعة الأكبر)");
+      if (['kid1', 'mid2', 'pro3', 'extra4'].includes(newGroup)) {
+        const oldGroup = currentUser.group;
+        const uName = currentUser.name;
+
+        db.ref('users/' + uName + '/group').set(newGroup);
+
+        db.ref(`groups/${oldGroup}/leaderboard`).once('value', (snap) => {
+          let lb = snap.val() || [];
+          lb = lb.filter(item => item !== uName);
+          db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
+        });
+
+        db.ref(`groups/${newGroup}/leaderboard`).once('value', (snap) => {
+          let lb = snap.val() || [];
+          if (!lb.includes(uName)) lb.push(uName);
+          db.ref(`groups/${newGroup}/leaderboard`).set(lb);
+        });
+
+        currentUser.group = newGroup;
+        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+        showStudentDashboard(newGroup, uName);
+        showToast("✨ تم تغيير المجموعة بنجاح");
+      } else if (newGroup !== null) {
+        alert("رمز المجموعة غير صحيح!");
+      }
+    }
+
+    function showStudentDashboard(gKey, studentName) {
+      document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('student-screen').classList.remove('hidden');
 
       const gData = groupsConfig[gKey];
-      document.getElementById('student-group-name').innerText = gData.name;
+      document.getElementById('student-welcome').innerText = `أهلاً بك يا ${studentName} 🌸`;
+      document.getElementById('student-group-name').innerText = `المجموعة الحالية: ${gData.name}`;
       document.getElementById('student-hero-title').innerText = gData.heroTitle;
 
-      // الاستماع للإنذار العام الموحد
+      // تفعيل التنبيهات الدورية
+      scheduleDailyMotivationalNotice();
+
       db.ref('global_announcement').on('value', (snapshot) => {
         const text = snapshot.val() || "";
         const box = document.getElementById('student-announcement-box');
         const textEl = document.getElementById('student-announcement-text');
-        
         if (text.trim() !== "") {
           textEl.innerText = text;
           box.classList.remove('hidden');
@@ -717,26 +983,25 @@
         const content = val.content || "اقرا الPDF في جروب الواتس";
         const time = val.time || gData.time;
         const heroes = val.heroes || Array(gData.heroCount).fill("لم يحدد بعد");
-        const studentsList = val.leaderboard || gData.defaultStudents;
+        const studentsList = val.leaderboard || [];
 
         document.getElementById('student-content').innerText = content;
         
         const heroesBox = document.getElementById('student-heroes');
         heroesBox.innerHTML = '';
-        heroes.forEach(h => {
-          heroesBox.innerHTML += `<div class="hero-item">${h}</div>`;
-        });
+        heroes.forEach(h => { heroesBox.innerHTML += `<div class="hero-item">${h}</div>`; });
 
         const lbBox = document.getElementById('student-leaderboard');
         lbBox.innerHTML = '';
         if (studentsList.length === 0) {
-          lbBox.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب مسجلين حالياً.</li>';
+          lbBox.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب منضمين لهذه المجموعة حالياً.</li>';
         } else {
           studentsList.forEach((student, index) => {
             let medal = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : `${index + 1}. `;
+            let isCurrent = student === studentName ? 'highlight' : '';
             lbBox.innerHTML += `
-              <li class="leaderboard-item">
-                <span>${medal} ${student}</span>
+              <li class="leaderboard-item ${isCurrent}">
+                <span>${medal} ${student} ${student === studentName ? '(أنت 👤)' : ''}</span>
                 <span>المركز ${index + 1}</span>
               </li>
             `;
@@ -748,16 +1013,13 @@
     }
 
     function showTeacherDashboard() {
-      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('teacher-screen').classList.remove('hidden');
 
-      // جلب الإعلان العام الحالي
       db.ref('global_announcement').on('value', (snapshot) => {
         const text = snapshot.val() || "";
         const input = document.getElementById('teacher-announcement-input');
-        if (input && document.activeElement !== input) {
-          input.value = text;
-        }
+        if (input && document.activeElement !== input) input.value = text;
       });
 
       const container = document.getElementById('teacher-groups-container');
@@ -799,13 +1061,8 @@
           </div>
 
           <div class="leaderboard-section">
-            <h3>👥 قائمة الطلاب والترتيب (تحديث تلقائي):</h3>
+            <h3>👥 قائمة ترتيب الطلاب المسجلين:</h3>
             <ul id="teacher-lb-list-${gKey}" class="leaderboard-list"></ul>
-            
-            <div class="add-student-box">
-              <input type="text" id="add-student-input-${gKey}" placeholder="اسم الطالب الجديد...">
-              <button onclick="addStudent('${gKey}')" class="btn">إضافة طالب ➕</button>
-            </div>
           </div>
         `;
         container.appendChild(card);
@@ -828,7 +1085,7 @@
             }
           }
 
-          teacherState[gKey] = val.leaderboard || [...gData.defaultStudents];
+          teacherState[gKey] = val.leaderboard || [];
           renderTeacherLeaderboard(gKey);
 
           startTimer(val.time || gData.time, `teacher-timer-${gKey}`);
@@ -842,7 +1099,7 @@
       list.innerHTML = '';
       
       if (!teacherState[gKey] || teacherState[gKey].length === 0) {
-        list.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب حالياً</li>';
+        list.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب مسجلين في هذه المجموعة</li>';
         return;
       }
 
@@ -853,27 +1110,15 @@
             <div class="order-btn-group">
               <button class="order-btn" onclick="moveStudent('${gKey}', ${index}, -1)" title="تحريك للأعلى">▲</button>
               <button class="order-btn" onclick="moveStudent('${gKey}', ${index}, 1)" title="تحريك للأسفل">▼</button>
-              <button class="btn-danger" onclick="removeStudent('${gKey}', ${index})" title="حذف الطالب">حذف 🗑️</button>
+              <button class="btn-danger" onclick="removeStudent('${gKey}', ${index})" title="حذف من الترتيب">إزالة 🗑️</button>
             </div>
           </li>
         `;
       });
     }
 
-    function addStudent(gKey) {
-      const input = document.getElementById(`add-student-input-${gKey}`);
-      const name = input.value.trim();
-      if (name) {
-        if (!teacherState[gKey]) teacherState[gKey] = [];
-        teacherState[gKey].push(name);
-        input.value = '';
-        renderTeacherLeaderboard(gKey);
-        autoSaveData(gKey, true);
-      }
-    }
-
     function removeStudent(gKey, index) {
-      if (confirm(`هل أنتِ متأكدة من حذف الطالب "${teacherState[gKey][index]}"؟`)) {
+      if (confirm(`هل أنتِ متأكدة من إزالة الطالب "${teacherState[gKey][index]}" من الترتيب؟`)) {
         teacherState[gKey].splice(index, 1);
         renderTeacherLeaderboard(gKey);
         autoSaveData(gKey, true);
@@ -892,18 +1137,89 @@
       }
     }
 
-    // Auto-Save Announcement
+    function showDeveloperDashboard() {
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('developer-screen').classList.remove('hidden');
+
+      db.ref('users').on('value', (snapshot) => {
+        const users = snapshot.val() || {};
+        const tbody = document.getElementById('dev-users-table');
+        tbody.innerHTML = '';
+
+        let count = 0;
+        for (let uName in users) {
+          count++;
+          const uData = users[uName];
+          const groupName = groupsConfig[uData.group] ? groupsConfig[uData.group].name : uData.group;
+
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${uName}</strong></td>
+              <td style="color: var(--gold-hover); font-weight: bold;">${uData.pass}</td>
+              <td>${groupName}</td>
+              <td style="display: flex; gap: 6px;">
+                <button class="btn" style="padding: 4px 8px; font-size: 0.85rem;" onclick="editUserByDev('${uName}', '${uData.pass}', '${uData.group}')">تعديل ✏️</button>
+                <button class="btn-danger" onclick="kickUserByDev('${uName}', '${uData.group}')">طرد/حذف 🗑️</button>
+              </td>
+            </tr>
+          `;
+        }
+
+        if (count === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أي حسابات مسجلة حالياً.</td></tr>';
+        }
+      });
+    }
+
+    function editUserByDev(uName, oldPass, oldGroup) {
+      const newPass = prompt(`تعديل كلمة السر لـ (${uName}):`, oldPass);
+      if (newPass === null) return;
+
+      const newGroup = prompt(`تعديل مجموعة (${uName}):\n1. kid1\n2. mid2\n3. pro3\n4. extra4`, oldGroup);
+      if (newGroup === null) return;
+
+      if (groupsConfig[newGroup]) {
+        db.ref('users/' + uName).update({ pass: newPass, group: newGroup }).then(() => {
+          if (oldGroup !== newGroup) {
+            db.ref(`groups/${oldGroup}/leaderboard`).once('value', (s) => {
+              let lb = s.val() || [];
+              lb = lb.filter(x => x !== uName);
+              db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
+            });
+            db.ref(`groups/${newGroup}/leaderboard`).once('value', (s) => {
+              let lb = s.val() || [];
+              if (!lb.includes(uName)) lb.push(uName);
+              db.ref(`groups/${newGroup}/leaderboard`).set(lb);
+            });
+          }
+          showToast("✨ تم تعديل بيانات الحساب بنجاح");
+        });
+      } else {
+        alert("رمز المجموعة غير صحيح!");
+      }
+    }
+
+    function kickUserByDev(uName, gKey) {
+      if (confirm(`هل أنت متأكد من طرد وحذف حساب "${uName}" نهائياً من المنصة؟`)) {
+        db.ref('users/' + uName).remove().then(() => {
+          db.ref(`groups/${gKey}/leaderboard`).once('value', (s) => {
+            let lb = s.val() || [];
+            lb = lb.filter(x => x !== uName);
+            db.ref(`groups/${gKey}/leaderboard`).set(lb);
+          });
+          showToast(`تم طرد ${uName} بنجاح`);
+        });
+      }
+    }
+
     function autoSaveGlobalAnnouncement() {
       if (globalAnnouncementTimer) clearTimeout(globalAnnouncementTimer);
       globalAnnouncementTimer = setTimeout(() => {
         const val = document.getElementById('teacher-announcement-input').value;
-        db.ref('global_announcement').set(val).then(() => {
-          showToast("✨ تم حفظ الإعلان الموحد تلقائياً");
-        });
+        db.ref('global_announcement').set(val).then(() => { showToast("✨ تم حفظ الإعلان الموحد تلقائياً"); });
       }, 1000);
     }
 
-    // Auto-Save Group Data Function with Debounce
     function autoSaveData(gKey, immediate = false) {
       if (saveDebounceTimers[gKey]) clearTimeout(saveDebounceTimers[gKey]);
 
@@ -922,20 +1238,14 @@
           content: content,
           time: time,
           heroes: heroes,
-          leaderboard: teacherState[gKey] || gData.defaultStudents
-        }).then(() => {
-          showToast("✨ تم حفظ التعديلات تلقائياً");
-        });
+          leaderboard: teacherState[gKey] || []
+        }).then(() => { showToast("✨ تم حفظ التعديلات تلقائياً"); });
       };
 
-      if (immediate) {
-        executeSave();
-      } else {
-        saveDebounceTimers[gKey] = setTimeout(executeSave, 1000);
-      }
+      if (immediate) executeSave();
+      else saveDebounceTimers[gKey] = setTimeout(executeSave, 1000);
     }
 
-    // Timer Function for Saturday (6) and Tuesday (2)
     function startTimer(targetTimeStr, elementId) {
       if (activeIntervals[elementId]) clearInterval(activeIntervals[elementId]);
 
