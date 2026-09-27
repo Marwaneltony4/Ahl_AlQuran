@@ -336,6 +336,36 @@
       border-color: #991b1b;
     }
 
+    .switch-acc-btn {
+      background-color: var(--emerald-light);
+      color: var(--emerald-dark);
+      border: 1px solid var(--emerald-primary);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .accounts-list-box {
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      background: var(--input-bg);
+    }
+
+    .account-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .account-item-row:last-child {
+      border-bottom: none;
+    }
+
     .group-title {
       font-family: 'Amiri', serif;
       color: var(--emerald-dark);
@@ -536,6 +566,12 @@
 
     <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
     <div id="auth-screen" class="card auth-card">
+      <div id="saved-accounts-section" class="hidden">
+        <h4 style="margin-bottom: 10px; color: var(--emerald-dark);">الحسابات المحفوظة على جهازك 👥</h4>
+        <div id="saved-accounts-list" class="accounts-list-box"></div>
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color);">
+      </div>
+
       <div class="auth-tabs">
         <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
         <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">حساب جديد ✨</button>
@@ -594,6 +630,7 @@
           <p id="student-group-name" style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;"></p>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button onclick="switchAccountView()" class="switch-acc-btn">تبديل الحساب 🔄</button>
           <button onclick="requestNotificationPermission()" class="logout-btn" style="background-color: #fef3c7; color: #b45309; border-color: #f59e0b;">تفعيل التنبيهات 🔔</button>
           <button onclick="changeGroupPrompt()" class="logout-btn" style="background-color: var(--emerald-light); color: var(--emerald-dark); border-color: var(--emerald-primary);">تغيير المجموعة 🔄</button>
           <button onclick="deleteAccountSelf()" class="btn-danger">حذف حسابي 🗑️</button>
@@ -638,7 +675,10 @@
           <h2>أهلاً وسهلاً أستاذة أسماء 🌸</h2>
           <p>أيام التحفيظ: **السبت والثلاثاء** | يُحفظ كل تعديل تقومين به تلقائياً ✨</p>
         </div>
-        <button onclick="logout()" class="logout-btn" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">تسجيل الخروج</button>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="switchAccountView()" class="switch-acc-btn" style="background: white; color: var(--emerald-dark);">تبديل الحساب 🔄</button>
+          <button onclick="logout()" class="logout-btn" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">تسجيل الخروج</button>
+        </div>
       </div>
 
       <div class="card" style="border: 2px dashed var(--gold-accent); background: var(--input-bg);">
@@ -657,7 +697,10 @@
     <div id="developer-screen" class="card hidden">
       <div class="dashboard-header">
         <h2 class="group-title" style="color: var(--gold-hover);">🛠️ لوحة تحكم المطور السرية (Developer)</h2>
-        <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="switchAccountView()" class="switch-acc-btn">تبديل الحساب 🔄</button>
+          <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+        </div>
       </div>
 
       <p style="margin-bottom: 15px; font-weight: bold;">إدارة كافة حسابات المنصة، كشف كلمات السر، التعديل أو الطرد النهائي:</p>
@@ -700,7 +743,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // إعدادات المجاميع مع تفريغ تام لأي أسماء قديمة
     const groupsConfig = {
       'kid1': { name: "المجموعة الأولى", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
       'mid2': { name: "المجموعة الثانية", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
@@ -714,7 +756,7 @@
     let saveDebounceTimers = {};
     let globalAnnouncementTimer = null;
 
-    // تنظيف القوائم القديمة تلقائياً من الفايربيس
+    // تنظيف القوائم القديمة
     function purgeOldDataFromDatabase() {
       const oldNames = ["دارين محمود", "زين معتز", "عدي أحمد", "فيروز علي", "كمال ممدوح", "روفيدة ممدوح", "كنزي محمد", "يوسف محمد", "مروان أيمن", "شيرين أيمن", "ريناد محمود", "محمد محمود", "ملك أحمد", "جودي معتز", "طالب 1", "طالب 2", "طالب 3"];
       
@@ -751,7 +793,76 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // نظام التنبيهات التشجيعية اليومية
+    // إدارة الحسابات المحفوظة وتبديلها
+    function getSavedAccounts() {
+      return JSON.parse(localStorage.getItem('ahl_quran_saved_accounts') || '[]');
+    }
+
+    function saveAccountToDevice(acc) {
+      let accs = getSavedAccounts();
+      accs = accs.filter(a => a.name !== acc.name);
+      accs.push(acc);
+      localStorage.setItem('ahl_quran_saved_accounts', JSON.stringify(accs));
+    }
+
+    function removeSavedAccount(accName) {
+      let accs = getSavedAccounts();
+      accs = accs.filter(a => a.name !== accName);
+      localStorage.setItem('ahl_quran_saved_accounts', JSON.stringify(accs));
+      renderSavedAccounts();
+    }
+
+    function renderSavedAccounts() {
+      const accs = getSavedAccounts();
+      const container = document.getElementById('saved-accounts-list');
+      const section = document.getElementById('saved-accounts-section');
+
+      if (accs.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      container.innerHTML = '';
+
+      accs.forEach(acc => {
+        const row = document.createElement('div');
+        row.className = 'account-item-row';
+        row.innerHTML = `
+          <div>
+            <strong>${acc.name}</strong>
+            <span style="font-size: 0.8rem; color: #666; margin-right: 5px;">(${acc.role === 'student' ? (groupsConfig[acc.group] ? groupsConfig[acc.group].name : acc.group) : 'معلمة/مطور'})</span>
+          </div>
+          <div>
+            <button onclick="loginWithSavedAcc('${acc.name}')" class="btn" style="padding: 4px 10px; font-size: 0.85rem; width: auto; display: inline-block;">دخول 🚀</button>
+            <button onclick="removeSavedAccount('${acc.name}')" style="background:none; border:none; color: var(--danger-color); cursor:pointer; font-weight:bold; margin-right: 5px;">✕</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function loginWithSavedAcc(accName) {
+      const accs = getSavedAccounts();
+      const target = accs.find(a => a.name === accName);
+      if (target) {
+        currentUser = target;
+        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
+        if (target.role === 'developer') showDeveloperDashboard();
+        else if (target.role === 'teacher') showTeacherDashboard();
+        else showStudentDashboard(target.group, target.name);
+      }
+    }
+
+    function switchAccountView() {
+      document.getElementById('student-screen').classList.add('hidden');
+      document.getElementById('teacher-screen').classList.add('hidden');
+      document.getElementById('developer-screen').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
+      renderSavedAccounts();
+      for (let key in activeIntervals) clearInterval(activeIntervals[key]);
+    }
+
     function requestNotificationPermission() {
       if ("Notification" in window) {
         Notification.requestPermission().then((permission) => {
@@ -769,14 +880,10 @@
 
     function sendMotivationNotification(title, body) {
       if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(title, {
-          body: body,
-          icon: "logo.jpg"
-        });
+        new Notification(title, { body: body, icon: "logo.jpg" });
       }
     }
 
-    // جدولة تنبيه تشجيعي يومي
     function scheduleDailyMotivationalNotice() {
       const messages = [
         "📖 قال النبي ﷺ: (خيركم من تعلم القرآن وعلمه) - لا تنسَ وردك اليوم!",
@@ -784,11 +891,10 @@
         "🌸 القرآن نور صدرك وجلاء حزنك.. ابدأ بقراءة حظبك اليومي الآن.",
         "🏆 من أحسن الصبر على حفظ القرآن ارتقى به في أعالي الجنان!"
       ];
-      
       setInterval(() => {
         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
         sendMotivationNotification("تذكير القرآن الكريم 📖", randomMsg);
-      }, 24 * 60 * 60 * 1000); // كل 24 ساعة
+      }, 24 * 60 * 60 * 1000);
     }
 
     function switchAuthTab(tab) {
@@ -808,6 +914,7 @@
 
     // Auto Login Check
     window.addEventListener('DOMContentLoaded', () => {
+      renderSavedAccounts();
       const savedUser = localStorage.getItem('ahl_quran_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
@@ -831,6 +938,7 @@
 
       if (username === 'developer' && pass === 'developer') {
         currentUser = { name: 'Developer', role: 'developer' };
+        saveAccountToDevice(currentUser);
         localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
         showDeveloperDashboard();
         return;
@@ -840,6 +948,7 @@
         const user = snapshot.val();
         if (user && user.pass === pass) {
           currentUser = { name: username, group: user.group, role: 'student' };
+          saveAccountToDevice(currentUser);
           localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
           showStudentDashboard(user.group, username);
         } else {
@@ -879,6 +988,7 @@
             });
 
             currentUser = { name: username, group: groupKey, role: 'student' };
+            saveAccountToDevice(currentUser);
             localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
             showStudentDashboard(groupKey, username);
             showToast("✨ تم إنشاء حسابك بنجاح!");
@@ -890,7 +1000,8 @@
     function showTeacherLoginPrompt() {
       const pass = prompt("أدخلي كلمة مرور المعلمة:");
       if (pass === 'dev') {
-        currentUser = { role: 'teacher' };
+        currentUser = { name: 'المعلمة أسماء', role: 'teacher' };
+        saveAccountToDevice(currentUser);
         localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
         showTeacherDashboard();
       } else if (pass !== null) {
@@ -899,13 +1010,12 @@
     }
 
     function logout() {
+      if (currentUser) {
+        removeSavedAccount(currentUser.name);
+      }
       localStorage.removeItem('ahl_quran_user');
       currentUser = null;
-      document.getElementById('auth-screen').classList.remove('hidden');
-      document.getElementById('student-screen').classList.add('hidden');
-      document.getElementById('teacher-screen').classList.add('hidden');
-      document.getElementById('developer-screen').classList.add('hidden');
-      for (let key in activeIntervals) clearInterval(activeIntervals[key]);
+      switchAccountView();
     }
 
     function deleteAccountSelf() {
@@ -946,6 +1056,7 @@
         });
 
         currentUser.group = newGroup;
+        saveAccountToDevice(currentUser);
         localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
         showStudentDashboard(newGroup, uName);
         showToast("✨ تم تغيير المجموعة بنجاح");
@@ -963,7 +1074,6 @@
       document.getElementById('student-group-name').innerText = `المجموعة الحالية: ${gData.name}`;
       document.getElementById('student-hero-title').innerText = gData.heroTitle;
 
-      // تفعيل التنبيهات الدورية
       scheduleDailyMotivationalNotice();
 
       db.ref('global_announcement').on('value', (snapshot) => {
