@@ -521,6 +521,31 @@
       color: var(--emerald-dark);
     }
 
+    /* أنماط كروت البلاغات لوحة المطور */
+    .bug-report-card {
+      background-color: var(--input-bg);
+      border-right: 5px solid var(--danger-color);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .bug-report-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .bug-report-text {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
     #toast {
       position: fixed;
       bottom: 25px;
@@ -666,6 +691,16 @@
         <h3>🥇 طلاب المجموعة وتصنيف الصدارة</h3>
         <ol id="student-leaderboard" class="leaderboard-list"></ol>
       </div>
+
+      <!-- قسم التبليغ عن مشكلة برمجية -->
+      <div class="card" style="margin-top: 25px; border-color: var(--danger-color); background: var(--input-bg);">
+        <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 واجهتك مشكلة أو خطأ برمجي؟</h4>
+        <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);">اكتب تفاصيل المشكلة وسيتم إرسالها فوراً للمطور لحلها.</p>
+        <div class="form-group">
+          <textarea id="bug-report-text-student" rows="2" placeholder="اشرح المشكلة هنا..."></textarea>
+        </div>
+        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التقرير للمطور 🚀</button>
+      </div>
     </div>
 
     <!-- شاشة المعلمة -->
@@ -691,6 +726,15 @@
       </div>
 
       <div id="teacher-groups-container"></div>
+
+      <!-- قسم التبليغ عن خطأ برمجي للمعلمة -->
+      <div class="card" style="border-color: var(--danger-color); background: var(--input-bg);">
+        <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 التبليغ عن خطأ برمجي للمطور</h4>
+        <div class="form-group">
+          <textarea id="bug-report-text-teacher" rows="2" placeholder="اشرحي الخطأ أو التعديل المطلوبة برمجياً..."></textarea>
+        </div>
+        <button onclick="submitBugReport('bug-report-text-teacher')" class="btn-danger" style="width: 100%;">إرسال للمطور 🚀</button>
+      </div>
     </div>
 
     <!-- الصفحة السرية للمطور (Developer Center) -->
@@ -700,6 +744,17 @@
         <div style="display: flex; gap: 8px;">
           <button onclick="switchAccountView()" class="switch-acc-btn">تبديل الحساب 🔄</button>
           <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <!-- قسم الأخطاء والتبليغات الواردة -->
+      <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
+          <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️</button>
+        </div>
+        <div id="developer-bug-reports-list">
+          <p style="text-align: center; color: var(--text-muted);">جاري تحميل التبليغات...</p>
         </div>
       </div>
 
@@ -755,6 +810,7 @@
     let activeIntervals = {};
     let saveDebounceTimers = {};
     let globalAnnouncementTimer = null;
+    let initialBugLoad = true;
 
     // تنظيف القوائم القديمة
     function purgeOldDataFromDatabase() {
@@ -1065,6 +1121,32 @@
       }
     }
 
+    // نظام إرسال التبليغات والأخطاء
+    function submitBugReport(inputId) {
+      const textEl = document.getElementById(inputId);
+      const bugText = textEl ? textEl.value.trim() : '';
+
+      if (!bugText) {
+        alert("يرجى كتابة تفاصيل الخطأ أو المشكلة أولاً!");
+        return;
+      }
+
+      const senderName = currentUser ? currentUser.name : "زائر/غير مسجل";
+      const senderRole = currentUser ? currentUser.role : "مجهول";
+
+      db.ref('bug_reports').push({
+        sender: senderName,
+        role: senderRole,
+        message: bugText,
+        time: new Date().toLocaleString('ar-EG')
+      }).then(() => {
+        showToast("🚀 تم إرسال التبليغ للمطور بنجاح، شكراً لمساعدتك!");
+        if (textEl) textEl.value = '';
+      }).catch(err => {
+        alert("حدث خطأ أثناء الإرسال، تحقق من الاتصال بالإنترنت.");
+      });
+    }
+
     function showStudentDashboard(gKey, studentName) {
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('student-screen').classList.remove('hidden');
@@ -1247,10 +1329,76 @@
       }
     }
 
+    function triggerBugAudioAlert() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch (e) {}
+    }
+
     function showDeveloperDashboard() {
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('developer-screen').classList.remove('hidden');
 
+      // طلب إذن الإشعارات من المطور فوراً
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+
+      // الاستماع اللحظي للتبليغات والأخطاء البرمجية
+      initialBugLoad = true;
+      db.ref('bug_reports').on('value', (snapshot) => {
+        const reports = snapshot.val() || {};
+        const container = document.getElementById('developer-bug-reports-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(reports).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--emerald-primary); font-weight: bold;">لا يوجد أي أخطاء برمجية مسجلة حالياً 🎉</p>';
+          initialBugLoad = false;
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = reports[key];
+          container.innerHTML += `
+            <div class="bug-report-card">
+              <div class="bug-report-header">
+                <span>👤 المرسل: <strong>${item.sender}</strong> (${item.role})</span>
+                <span>⏱️ ${item.time}</span>
+              </div>
+              <div class="bug-report-text">${item.message}</div>
+              <button onclick="deleteSingleBugReport('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف البلاغ ✕</button>
+            </div>
+          `;
+        });
+
+        // إرسال إشعار للمطور عند استقبال تبليغ جديد
+        if (!initialBugLoad && keys.length > 0) {
+          const latest = reports[keys[0]];
+          showToast(`🚨 تبليغ جديد من ${latest.sender}!`);
+          triggerBugAudioAlert();
+
+          if ("Notification" in window && Notification.permission === "granted") {
+            new Notification("🚨 خطأ برمجي جديد مٌبلغ عنه!", {
+              body: `من: ${latest.sender}\nالمحتوى: ${latest.message}`,
+              icon: "logo.jpg"
+            });
+          }
+        }
+
+        initialBugLoad = false;
+      });
+
+      // عرض جدول المستخدمين
       db.ref('users').on('value', (snapshot) => {
         const users = snapshot.val() || {};
         const tbody = document.getElementById('dev-users-table');
@@ -1279,6 +1427,20 @@
           tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أي حسابات مسجلة حالياً.</td></tr>';
         }
       });
+    }
+
+    function deleteSingleBugReport(key) {
+      db.ref('bug_reports/' + key).remove().then(() => {
+        showToast("تم حذف التبليغ");
+      });
+    }
+
+    function clearAllBugReports() {
+      if (confirm("هل أنت متأكد من مسح جميع التبليغات؟")) {
+        db.ref('bug_reports').remove().then(() => {
+          showToast("تم مسح كافة التبليغات");
+        });
+      }
     }
 
     function editUserByDev(uName, oldPass, oldGroup) {
