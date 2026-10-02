@@ -521,7 +521,16 @@
       color: var(--emerald-dark);
     }
 
-    /* أنماط كروت البلاغات لوحة المطور */
+    .dev-group-select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: bold;
+      background-color: var(--input-bg);
+      color: var(--text-dark);
+    }
+
     .bug-report-card {
       background-color: var(--input-bg);
       border-right: 5px solid var(--danger-color);
@@ -699,7 +708,7 @@
         <div class="form-group">
           <textarea id="bug-report-text-student" rows="2" placeholder="اشرح المشكلة هنا..."></textarea>
         </div>
-        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التقرير للمطور 🚀</button>
+        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التتقرير للمطور 🚀</button>
       </div>
     </div>
 
@@ -731,7 +740,7 @@
       <div class="card" style="border-color: var(--danger-color); background: var(--input-bg);">
         <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 التبليغ عن خطأ برمجي للمطور</h4>
         <div class="form-group">
-          <textarea id="bug-report-text-teacher" rows="2" placeholder="اشرحي الخطأ أو التعديل المطلوبة برمجياً..."></textarea>
+          <textarea id="bug-report-text-teacher" rows="2" placeholder="اشرحي الخطأ أو التعديل المطلوب برمجياً..."></textarea>
         </div>
         <button onclick="submitBugReport('bug-report-text-teacher')" class="btn-danger" style="width: 100%;">إرسال للمطور 🚀</button>
       </div>
@@ -758,7 +767,7 @@
         </div>
       </div>
 
-      <p style="margin-bottom: 15px; font-weight: bold;">إدارة كافة حسابات المنصة، كشف كلمات السر، التعديل أو الطرد النهائي:</p>
+      <p style="margin-bottom: 15px; font-weight: bold;">إدارة كافة حسابات المنصة، تعديل المجموعات مباشرة، كشف كلمات السر والطرد النهائي:</p>
 
       <div style="overflow-x: auto;">
         <table class="dev-table">
@@ -766,7 +775,7 @@
             <tr>
               <th>اسم الحساب</th>
               <th>كلمة السر 🔑</th>
-              <th>المجموعة</th>
+              <th>المجموعة الحالية 📁</th>
               <th>إجراءات والتعديل ⚙️</th>
             </tr>
           </thead>
@@ -1348,12 +1357,10 @@
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('developer-screen').classList.remove('hidden');
 
-      // طلب إذن الإشعارات من المطور فوراً
       if ("Notification" in window && Notification.permission !== "granted") {
         Notification.requestPermission();
       }
 
-      // الاستماع اللحظي للتبليغات والأخطاء البرمجية
       initialBugLoad = true;
       db.ref('bug_reports').on('value', (snapshot) => {
         const reports = snapshot.val() || {};
@@ -1381,7 +1388,6 @@
           `;
         });
 
-        // إرسال إشعار للمطور عند استقبال تبليغ جديد
         if (!initialBugLoad && keys.length > 0) {
           const latest = reports[keys[0]];
           showToast(`🚨 تبليغ جديد من ${latest.sender}!`);
@@ -1398,7 +1404,7 @@
         initialBugLoad = false;
       });
 
-      // عرض جدول المستخدمين
+      // عرض جدول المستخدمين مع إمكانية تغيير المجموعة فورياً
       db.ref('users').on('value', (snapshot) => {
         const users = snapshot.val() || {};
         const tbody = document.getElementById('dev-users-table');
@@ -1408,13 +1414,19 @@
         for (let uName in users) {
           count++;
           const uData = users[uName];
-          const groupName = groupsConfig[uData.group] ? groupsConfig[uData.group].name : uData.group;
 
           tbody.innerHTML += `
             <tr>
               <td><strong>${uName}</strong></td>
               <td style="color: var(--gold-hover); font-weight: bold;">${uData.pass}</td>
-              <td>${groupName}</td>
+              <td>
+                <select class="dev-group-select" onchange="changeUserGroupDirectly('${uName}', '${uData.group}', this.value)">
+                  <option value="kid1" ${uData.group === 'kid1' ? 'selected' : ''}>المجموعة الأولى</option>
+                  <option value="mid2" ${uData.group === 'mid2' ? 'selected' : ''}>المجموعة الثانية</option>
+                  <option value="pro3" ${uData.group === 'pro3' ? 'selected' : ''}>المجموعة الثالثة</option>
+                  <option value="extra4" ${uData.group === 'extra4' ? 'selected' : ''}>المجموعة الأكبر</option>
+                </select>
+              </td>
               <td style="display: flex; gap: 6px;">
                 <button class="btn" style="padding: 4px 8px; font-size: 0.85rem;" onclick="editUserByDev('${uName}', '${uData.pass}', '${uData.group}')">تعديل ✏️</button>
                 <button class="btn-danger" onclick="kickUserByDev('${uName}', '${uData.group}')">طرد/حذف 🗑️</button>
@@ -1426,6 +1438,29 @@
         if (count === 0) {
           tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أي حسابات مسجلة حالياً.</td></tr>';
         }
+      });
+    }
+
+    // دالة تغيير مجموعة الحساب مباشرة من القائمة المنسدلة للمطور
+    function changeUserGroupDirectly(uName, oldGroup, newGroup) {
+      if (oldGroup === newGroup) return;
+
+      db.ref('users/' + uName + '/group').set(newGroup).then(() => {
+        // إزالة من الترتيب القديم
+        db.ref(`groups/${oldGroup}/leaderboard`).once('value', (s) => {
+          let lb = s.val() || [];
+          lb = lb.filter(x => x !== uName);
+          db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
+        });
+
+        // إضافة للترتيب الجديد
+        db.ref(`groups/${newGroup}/leaderboard`).once('value', (s) => {
+          let lb = s.val() || [];
+          if (!lb.includes(uName)) lb.push(uName);
+          db.ref(`groups/${newGroup}/leaderboard`).set(lb);
+        });
+
+        showToast(`✨ تم نقل ${uName} إلى المجموعة الجديدة بنجاح`);
       });
     }
 
@@ -1451,19 +1486,8 @@
       if (newGroup === null) return;
 
       if (groupsConfig[newGroup]) {
-        db.ref('users/' + uName).update({ pass: newPass, group: newGroup }).then(() => {
-          if (oldGroup !== newGroup) {
-            db.ref(`groups/${oldGroup}/leaderboard`).once('value', (s) => {
-              let lb = s.val() || [];
-              lb = lb.filter(x => x !== uName);
-              db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
-            });
-            db.ref(`groups/${newGroup}/leaderboard`).once('value', (s) => {
-              let lb = s.val() || [];
-              if (!lb.includes(uName)) lb.push(uName);
-              db.ref(`groups/${newGroup}/leaderboard`).set(lb);
-            });
-          }
+        changeUserGroupDirectly(uName, oldGroup, newGroup);
+        db.ref('users/' + uName + '/pass').set(newPass).then(() => {
           showToast("✨ تم تعديل بيانات الحساب بنجاح");
         });
       } else {
