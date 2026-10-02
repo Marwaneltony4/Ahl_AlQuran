@@ -195,37 +195,31 @@
       color: #ffffff;
     }
 
-    .auth-card {
-      max-width: 450px;
-      margin: 20px auto;
-      text-align: center;
-      padding: 30px 25px;
+    .group-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
     }
 
-    .auth-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 10px;
-    }
-
-    .auth-tab {
-      flex: 1;
-      padding: 10px;
-      background: none;
-      border: none;
+    .group-btn {
+      padding: 18px;
+      background-color: var(--input-bg);
+      border: 2px solid var(--emerald-primary);
+      border-radius: 14px;
+      font-size: 1.15rem;
       font-weight: bold;
-      font-size: 1.05rem;
-      color: var(--text-muted);
+      color: var(--emerald-dark);
       cursor: pointer;
-      border-radius: 8px;
+      text-align: center;
+      transition: all 0.2s ease;
     }
 
-    .auth-tab.active {
-      background-color: var(--emerald-light);
-      color: var(--emerald-dark);
-      border: 1px solid var(--emerald-primary);
+    .group-btn:hover {
+      background-color: var(--emerald-primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
 
     .form-group {
@@ -257,23 +251,6 @@
       box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
     }
 
-    .alert-notice {
-      background-color: #fffbeb;
-      border: 1px solid var(--gold-accent);
-      color: var(--gold-hover);
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-      text-align: right;
-    }
-
-    body.dark-mode .alert-notice {
-      background-color: #451a03;
-      color: #fde047;
-    }
-
     .btn {
       width: 100%;
       padding: 12px 20px;
@@ -295,7 +272,7 @@
       background-color: transparent;
       color: var(--emerald-primary);
       border: 2px solid var(--emerald-primary);
-      margin-top: 12px;
+      margin-top: 15px;
     }
 
     .btn-danger {
@@ -334,36 +311,6 @@
       background-color: #450a0a;
       color: #fca5a5;
       border-color: #991b1b;
-    }
-
-    .switch-acc-btn {
-      background-color: var(--emerald-light);
-      color: var(--emerald-dark);
-      border: 1px solid var(--emerald-primary);
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .accounts-list-box {
-      margin-bottom: 15px;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px;
-      background: var(--input-bg);
-    }
-
-    .account-item-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .account-item-row:last-child {
-      border-bottom: none;
     }
 
     .group-title {
@@ -474,14 +421,25 @@
       border: 1px solid var(--border-color);
     }
 
-    .leaderboard-item.highlight {
-      background-color: var(--emerald-light);
-      border-color: var(--emerald-primary);
-    }
-
     .teacher-group-card {
       border: 2px solid var(--emerald-primary);
       margin-bottom: 25px;
+    }
+
+    .add-student-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .add-student-box input {
+      flex: 1;
+    }
+
+    .add-student-box button {
+      width: auto;
+      padding: 0 20px;
+      white-space: nowrap;
     }
 
     .order-btn-group {
@@ -504,33 +462,6 @@
       justify-content: center;
     }
 
-    .dev-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    .dev-table th, .dev-table td {
-      border: 1px solid var(--border-color);
-      padding: 10px;
-      text-align: right;
-    }
-
-    .dev-table th {
-      background-color: var(--emerald-light);
-      color: var(--emerald-dark);
-    }
-
-    .dev-group-select {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      font-size: 0.9rem;
-      font-weight: bold;
-      background-color: var(--input-bg);
-      color: var(--text-dark);
-    }
-
     .bug-report-card {
       background-color: var(--input-bg);
       border-right: 5px solid var(--danger-color);
@@ -540,19 +471,22 @@
       box-shadow: var(--shadow-sm);
     }
 
-    .bug-report-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+    .audio-report-card {
+      background-color: var(--input-bg);
+      border-right: 5px solid var(--emerald-primary);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .bug-report-text {
-      font-size: 1rem;
-      font-weight: bold;
-      color: var(--text-dark);
-      line-height: 1.5;
+    .audio-recorder-box {
+      border: 2px dashed var(--emerald-primary);
+      background: var(--input-bg);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      margin-top: 20px;
     }
 
     #toast {
@@ -598,81 +532,34 @@
       <p>منصة المتابعة والمراجعة اللحظية</p>
     </header>
 
-    <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
-    <div id="auth-screen" class="card auth-card">
-      <div id="saved-accounts-section" class="hidden">
-        <h4 style="margin-bottom: 10px; color: var(--emerald-dark);">الحسابات المحفوظة على جهازك 👥</h4>
-        <div id="saved-accounts-list" class="accounts-list-box"></div>
-        <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color);">
+    <!-- شاشة اختيار المجموعة للطلاب -->
+    <div id="selection-screen" class="card" style="text-align: center;">
+      <h2 style="color: var(--emerald-dark); font-family: 'Amiri', serif; margin-bottom: 10px;">أهلاً بكم في منصة القرآن الكريم 📖</h2>
+      <p style="color: var(--text-muted); margin-bottom: 20px;">اختر مجموعتك الدراسية لعرض الورد والتصنيف والتسميع الصوتى:</p>
+
+      <div class="group-selection-grid">
+        <button class="group-btn" onclick="selectGroup('kid1')">المجموعة الأولى 🌸</button>
+        <button class="group-btn" onclick="selectGroup('mid2')">المجموعة الثانية 🌟</button>
+        <button class="group-btn" onclick="selectGroup('pro3')">المجموعة الثالثة 🏆</button>
+        <button class="group-btn" onclick="selectGroup('extra4')">المجموعة الأكبر 💎</button>
       </div>
 
-      <div class="auth-tabs">
-        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-        <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">حساب جديد ✨</button>
-      </div>
-
-      <!-- نموذج تسجيل الدخول -->
-      <form id="login-form">
-        <div class="form-group">
-          <label for="login-username">اسم الحساب:</label>
-          <input type="text" id="login-username" placeholder="أدخل اسمك المسجل به" required>
-        </div>
-        <div class="form-group">
-          <label for="login-password">كلمة المرور:</label>
-          <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
-        </div>
-        <button type="submit" class="btn">دخول للحساب 🚀</button>
-      </form>
-
-      <!-- نموذج إنشاء حساب جديد -->
-      <form id="register-form" class="hidden">
-        <div class="alert-notice">
-          ⚠️ تنبيه هام: يرجى حفظ اسم الحساب وكلمة المرور جيداً لتتمكن من الدخول منهما لاحقاً.
-        </div>
-        <div class="form-group">
-          <label for="reg-username">اسم الطالب الثلاثي:</label>
-          <input type="text" id="reg-username" placeholder="مثال: محمد أحمد علي" required>
-        </div>
-        <div class="form-group">
-          <label for="reg-password">إنشاء كلمة مرور:</label>
-          <input type="password" id="reg-password" placeholder="اختر كلمة مرور سهلة للحفظ" required>
-        </div>
-        <div class="form-group">
-          <label for="reg-group">اختر مجموعتك الدراسية:</label>
-          <select id="reg-group" required>
-            <option value="kid1">المجموعة الأولى</option>
-            <option value="mid2">المجموعة الثانية</option>
-            <option value="pro3">المجموعة الثالثة</option>
-            <option value="extra4">المجموعة الأكبر</option>
-          </select>
-        </div>
-        <button type="submit" class="btn">إنشاء الحساب الآن ✨</button>
-      </form>
-
-      <p id="auth-error" style="color: var(--danger-color); margin-top: 12px; display: none; font-weight: bold;"></p>
-
-      <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border-color);">
+      <hr style="margin: 25px 0; border: 0; border-top: 1px solid var(--border-color);">
       
-      <button onclick="showTeacherLoginPrompt()" class="btn btn-secondary">صفحة المعلمة 🌸</button>
+      <button onclick="showTeacherLoginPrompt()" class="btn btn-secondary">صفحة المعلمة والمطور 🌸</button>
     </div>
 
-    <!-- شاشة البروفايل الخاص بالطالب -->
-    <div id="student-screen" class="card hidden">
+    <!-- شاشة عرض المجموعة للطالب -->
+    <div id="group-screen" class="card hidden">
       <div class="dashboard-header">
         <div>
-          <h2 id="student-welcome" class="group-title">أهلاً بك 🌸</h2>
-          <p id="student-group-name" style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;"></p>
+          <h2 id="group-display-name" class="group-title">المجموعة...</h2>
+          <p style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;">صفحة المتابعة المباشرة</p>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button onclick="switchAccountView()" class="switch-acc-btn">تبديل الحساب 🔄</button>
-          <button onclick="requestNotificationPermission()" class="logout-btn" style="background-color: #fef3c7; color: #b45309; border-color: #f59e0b;">تفعيل التنبيهات 🔔</button>
-          <button onclick="changeGroupPrompt()" class="logout-btn" style="background-color: var(--emerald-light); color: var(--emerald-dark); border-color: var(--emerald-primary);">تغيير المجموعة 🔄</button>
-          <button onclick="deleteAccountSelf()" class="btn-danger">حذف حسابي 🗑️</button>
-          <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
-        </div>
+        <button onclick="backToGroupSelection()" class="logout-btn">تغيير المجموعة 🔄</button>
       </div>
 
-      <!-- بار التنبيهات الموحد -->
+      <!-- شريط الإعلانات العامة -->
       <div id="student-announcement-box" class="announcement-card hidden">
         <div class="announcement-icon">📢</div>
         <div class="announcement-content">
@@ -696,6 +583,28 @@
         <div id="student-content" class="content-box">اقرا الPDF في جروب الواتس</div>
       </div>
 
+      <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة -->
+      <div class="audio-recorder-box">
+        <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; margin-bottom: 12px; font-size: 1.4rem;">🎙️ تسجيل التسميع الصوتي للمعلمة</h3>
+        
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>اسم الطالب المسجل:</label>
+          <input type="text" id="audio-student-name" placeholder="اكتب اسمك الثلاثي قبل التسجيل..." required>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+          <button id="record-btn" onclick="toggleRecording()" class="btn" style="width: auto; padding: 10px 22px;">بدء التسجيل 🎙️️</button>
+          <button id="stop-btn" onclick="stopRecording()" class="btn-danger" style="display: none;">إيقاف التسجيل 🛑</button>
+        </div>
+
+        <div id="audio-preview-container" class="hidden" style="margin-top: 12px;">
+          <p style="font-weight: bold; margin-bottom: 6px;">معاينة المقطع الصوتي قبل الإرسال:</p>
+          <audio id="audio-player" controls style="width: 100%; max-width: 400px; margin-bottom: 10px;"></audio>
+          <br>
+          <button onclick="sendAudioRecord()" class="btn" style="background-color: var(--gold-accent); width: auto; padding: 10px 25px;">إرسال التسجيل للمعلمة 🚀</button>
+        </div>
+      </div>
+
       <div class="leaderboard-section">
         <h3>🥇 طلاب المجموعة وتصنيف الصدارة</h3>
         <ol id="student-leaderboard" class="leaderboard-list"></ol>
@@ -704,11 +613,10 @@
       <!-- قسم التبليغ عن مشكلة برمجية -->
       <div class="card" style="margin-top: 25px; border-color: var(--danger-color); background: var(--input-bg);">
         <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 واجهتك مشكلة أو خطأ برمجي؟</h4>
-        <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);">اكتب تفاصيل المشكلة وسيتم إرسالها فوراً للمطور لحلها.</p>
         <div class="form-group">
           <textarea id="bug-report-text-student" rows="2" placeholder="اشرح المشكلة هنا..."></textarea>
         </div>
-        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التتقرير للمطور 🚀</button>
+        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التقرير للمطور 🚀</button>
       </div>
     </div>
 
@@ -719,10 +627,7 @@
           <h2>أهلاً وسهلاً أستاذة أسماء 🌸</h2>
           <p>أيام التحفيظ: **السبت والثلاثاء** | يُحفظ كل تعديل تقومين به تلقائياً ✨</p>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <button onclick="switchAccountView()" class="switch-acc-btn" style="background: white; color: var(--emerald-dark);">تبديل الحساب 🔄</button>
-          <button onclick="logout()" class="logout-btn" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">تسجيل الخروج</button>
-        </div>
+        <button onclick="logoutTeacher()" class="logout-btn" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">تسجيل الخروج</button>
       </div>
 
       <div class="card" style="border: 2px dashed var(--gold-accent); background: var(--input-bg);">
@@ -734,29 +639,34 @@
         </div>
       </div>
 
+      <!-- كارت استلام وتسجيلات صوت الطلاب -->
+      <div class="card" style="border: 2px solid var(--emerald-primary); background: var(--input-bg); margin-bottom: 25px;">
+        <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          🎙️ تسجيلات التسميع الصوتية من الطلاب
+        </h3>
+        <div id="teacher-audio-list">
+          <p style="text-align: center; color: var(--text-muted);">جاري تحميل التسجيلات الصوتية...</p>
+        </div>
+      </div>
+
       <div id="teacher-groups-container"></div>
 
-      <!-- قسم التبليغ عن خطأ برمجي للمعلمة -->
       <div class="card" style="border-color: var(--danger-color); background: var(--input-bg);">
         <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 التبليغ عن خطأ برمجي للمطور</h4>
         <div class="form-group">
-          <textarea id="bug-report-text-teacher" rows="2" placeholder="اشرحي الخطأ أو التعديل المطلوب برمجياً..."></textarea>
+          <textarea id="bug-report-text-teacher" rows="2" placeholder="اشرحي الخطأ برمجياً..."></textarea>
         </div>
         <button onclick="submitBugReport('bug-report-text-teacher')" class="btn-danger" style="width: 100%;">إرسال للمطور 🚀</button>
       </div>
     </div>
 
-    <!-- الصفحة السرية للمطور (Developer Center) -->
+    <!-- لوحة تحكم المطور السرية -->
     <div id="developer-screen" class="card hidden">
       <div class="dashboard-header">
         <h2 class="group-title" style="color: var(--gold-hover);">🛠️ لوحة تحكم المطور السرية (Developer)</h2>
-        <div style="display: flex; gap: 8px;">
-          <button onclick="switchAccountView()" class="switch-acc-btn">تبديل الحساب 🔄</button>
-          <button onclick="logout()" class="logout-btn">تسجيل الخروج</button>
-        </div>
+        <button onclick="logoutTeacher()" class="logout-btn">تسجيل الخروج</button>
       </div>
 
-      <!-- قسم الأخطاء والتبليغات الواردة -->
       <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
@@ -765,24 +675,6 @@
         <div id="developer-bug-reports-list">
           <p style="text-align: center; color: var(--text-muted);">جاري تحميل التبليغات...</p>
         </div>
-      </div>
-
-      <p style="margin-bottom: 15px; font-weight: bold;">إدارة كافة حسابات المنصة، تعديل المجموعات مباشرة، كشف كلمات السر والطرد النهائي:</p>
-
-      <div style="overflow-x: auto;">
-        <table class="dev-table">
-          <thead>
-            <tr>
-              <th>اسم الحساب</th>
-              <th>كلمة السر 🔑</th>
-              <th>المجموعة الحالية 📁</th>
-              <th>إجراءات والتعديل ⚙️</th>
-            </tr>
-          </thead>
-          <tbody id="dev-users-table">
-            <!-- سيتم تحميل الحسابات هنا -->
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -807,37 +699,48 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // إعدادات المجاميع مع استرجاع أسماء المجموعة الثالثة الأصلية بالكامل
     const groupsConfig = {
-      'kid1': { name: "المجموعة الأولى", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
-      'mid2': { name: "المجموعة الثانية", time: "18:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" },
-      'pro3': { name: "المجموعة الثالثة", time: "18:00", heroCount: 2, heroTitle: "أبطال الشهر 🏆" },
-      'extra4': { name: "المجموعة الأكبر", time: "17:00", heroCount: 1, heroTitle: "بطل الشهر 🏆" }
+      'kid1': {
+        name: "المجموعة الأولى",
+        time: "18:00",
+        heroCount: 1,
+        heroTitle: "بطل الشهر 🏆",
+        defaultStudents: ["دارين محمود", "زين معتز", "عدي أحمد", "فيروز علي"]
+      },
+      'mid2': {
+        name: "المجموعة الثانية",
+        time: "18:00",
+        heroCount: 1,
+        heroTitle: "بطل الشهر 🏆",
+        defaultStudents: ["كمال ممدوح", "روفيدة ممدوح", "كنزي محمد", "يوسف محمد"]
+      },
+      'pro3': {
+        name: "المجموعة الثالثة",
+        time: "18:00",
+        heroCount: 2,
+        heroTitle: "أبطال الشهر 🏆",
+        defaultStudents: ["مروان أيمن", "شيرين أيمن", "ريناد محمود", "محمد محمود", "ملك أحمد", "جودي معتز"]
+      },
+      'extra4': {
+        name: "المجموعة الأكبر",
+        time: "17:00",
+        heroCount: 1,
+        heroTitle: "بطل الشهر 🏆",
+        defaultStudents: ["طالب 1", "طالب 2", "طالب 3"]
+      }
     };
 
-    let currentUser = null;
     let teacherState = {};
     let activeIntervals = {};
     let saveDebounceTimers = {};
     let globalAnnouncementTimer = null;
-    let initialBugLoad = true;
+    let selectedGroupKey = null;
 
-    // تنظيف القوائم القديمة
-    function purgeOldDataFromDatabase() {
-      const oldNames = ["دارين محمود", "زين معتز", "عدي أحمد", "فيروز علي", "كمال ممدوح", "روفيدة ممدوح", "كنزي محمد", "يوسف محمد", "مروان أيمن", "شيرين أيمن", "ريناد محمود", "محمد محمود", "ملك أحمد", "جودي معتز", "طالب 1", "طالب 2", "طالب 3"];
-      
-      for (let gKey in groupsConfig) {
-        db.ref(`groups/${gKey}/leaderboard`).once('value', (snap) => {
-          let lb = snap.val() || [];
-          if (Array.isArray(lb)) {
-            let filtered = lb.filter(name => !oldNames.includes(name));
-            if (filtered.length !== lb.length) {
-              db.ref(`groups/${gKey}/leaderboard`).set(filtered);
-            }
-          }
-        });
-      }
-    }
-    purgeOldDataFromDatabase();
+    // متغيرة الريكورد الصوتي
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioBase64Data = null;
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
@@ -858,314 +761,15 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // إدارة الحسابات المحفوظة وتبديلها
-    function getSavedAccounts() {
-      return JSON.parse(localStorage.getItem('ahl_quran_saved_accounts') || '[]');
-    }
-
-    function saveAccountToDevice(acc) {
-      let accs = getSavedAccounts();
-      accs = accs.filter(a => a.name !== acc.name);
-      accs.push(acc);
-      localStorage.setItem('ahl_quran_saved_accounts', JSON.stringify(accs));
-    }
-
-    function removeSavedAccount(accName) {
-      let accs = getSavedAccounts();
-      accs = accs.filter(a => a.name !== accName);
-      localStorage.setItem('ahl_quran_saved_accounts', JSON.stringify(accs));
-      renderSavedAccounts();
-    }
-
-    function renderSavedAccounts() {
-      const accs = getSavedAccounts();
-      const container = document.getElementById('saved-accounts-list');
-      const section = document.getElementById('saved-accounts-section');
-
-      if (accs.length === 0) {
-        section.classList.add('hidden');
-        return;
-      }
-
-      section.classList.remove('hidden');
-      container.innerHTML = '';
-
-      accs.forEach(acc => {
-        const row = document.createElement('div');
-        row.className = 'account-item-row';
-        row.innerHTML = `
-          <div>
-            <strong>${acc.name}</strong>
-            <span style="font-size: 0.8rem; color: #666; margin-right: 5px;">(${acc.role === 'student' ? (groupsConfig[acc.group] ? groupsConfig[acc.group].name : acc.group) : 'معلمة/مطور'})</span>
-          </div>
-          <div>
-            <button onclick="loginWithSavedAcc('${acc.name}')" class="btn" style="padding: 4px 10px; font-size: 0.85rem; width: auto; display: inline-block;">دخول 🚀</button>
-            <button onclick="removeSavedAccount('${acc.name}')" style="background:none; border:none; color: var(--danger-color); cursor:pointer; font-weight:bold; margin-right: 5px;">✕</button>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function loginWithSavedAcc(accName) {
-      const accs = getSavedAccounts();
-      const target = accs.find(a => a.name === accName);
-      if (target) {
-        currentUser = target;
-        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-        if (target.role === 'developer') showDeveloperDashboard();
-        else if (target.role === 'teacher') showTeacherDashboard();
-        else showStudentDashboard(target.group, target.name);
-      }
-    }
-
-    function switchAccountView() {
-      document.getElementById('student-screen').classList.add('hidden');
-      document.getElementById('teacher-screen').classList.add('hidden');
-      document.getElementById('developer-screen').classList.add('hidden');
-      document.getElementById('auth-screen').classList.remove('hidden');
-      renderSavedAccounts();
-      for (let key in activeIntervals) clearInterval(activeIntervals[key]);
-    }
-
-    function requestNotificationPermission() {
-      if ("Notification" in window) {
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            showToast("🔔 تم تفعيل التنبيهات بنجاح!");
-            sendMotivationNotification("أهلاً بك! ✨", "تم تفعيل التنبيهات التشجيعية اليومية لمساعدتك في حفظ القرآن الكريم.");
-          } else {
-            alert("يرجى إعطاء الصلاحية من إعدادات المتصفح لترسل لك المنصة التنبيهات اليومية.");
-          }
-        });
-      } else {
-        alert("متصفحك لا يدعم التنبيهات المباشرة.");
-      }
-    }
-
-    function sendMotivationNotification(title, body) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(title, { body: body, icon: "logo.jpg" });
-      }
-    }
-
-    function scheduleDailyMotivationalNotice() {
-      const messages = [
-        "📖 قال النبي ﷺ: (خيركم من تعلم القرآن وعلمه) - لا تنسَ وردك اليوم!",
-        "✨ قليلٌ دائم خيرٌ من كثيرٍ منقطع.. حافظ على مراجعة آياتك اليوم.",
-        "🌸 القرآن نور صدرك وجلاء حزنك.. ابدأ بقراءة حظبك اليومي الآن.",
-        "🏆 من أحسن الصبر على حفظ القرآن ارتقى به في أعالي الجنان!"
-      ];
-      setInterval(() => {
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-        sendMotivationNotification("تذكير القرآن الكريم 📖", randomMsg);
-      }, 24 * 60 * 60 * 1000);
-    }
-
-    function switchAuthTab(tab) {
-      document.getElementById('auth-error').style.display = 'none';
-      if (tab === 'login') {
-        document.getElementById('tab-login').classList.add('active');
-        document.getElementById('tab-register').classList.remove('active');
-        document.getElementById('login-form').classList.remove('hidden');
-        document.getElementById('register-form').classList.add('hidden');
-      } else {
-        document.getElementById('tab-register').classList.add('active');
-        document.getElementById('tab-login').classList.remove('active');
-        document.getElementById('register-form').classList.remove('hidden');
-        document.getElementById('login-form').classList.add('hidden');
-      }
-    }
-
-    // Auto Login Check
-    window.addEventListener('DOMContentLoaded', () => {
-      renderSavedAccounts();
-      const savedUser = localStorage.getItem('ahl_quran_user');
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        if (currentUser.role === 'developer') {
-          showDeveloperDashboard();
-        } else if (currentUser.role === 'teacher') {
-          showTeacherDashboard();
-        } else {
-          showStudentDashboard(currentUser.group, currentUser.name);
-        }
-      }
-    });
-
-    // Login Form
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const username = document.getElementById('login-username').value.trim();
-      const pass = document.getElementById('login-password').value.trim();
-      const errEl = document.getElementById('auth-error');
-      errEl.style.display = 'none';
-
-      if (username === 'developer' && pass === 'developer') {
-        currentUser = { name: 'Developer', role: 'developer' };
-        saveAccountToDevice(currentUser);
-        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-        showDeveloperDashboard();
-        return;
-      }
-
-      db.ref('users/' + username).once('value', (snapshot) => {
-        const user = snapshot.val();
-        if (user && user.pass === pass) {
-          currentUser = { name: username, group: user.group, role: 'student' };
-          saveAccountToDevice(currentUser);
-          localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-          showStudentDashboard(user.group, username);
-        } else {
-          errEl.innerText = "اسم الحساب أو كلمة المرور غير صحيحة!";
-          errEl.style.display = 'block';
-        }
-      });
-    });
-
-    // Register Form
-    document.getElementById('register-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const username = document.getElementById('reg-username').value.trim();
-      const pass = document.getElementById('reg-password').value.trim();
-      const groupKey = document.getElementById('reg-group').value;
-      const errEl = document.getElementById('auth-error');
-      errEl.style.display = 'none';
-
-      if (username.toLowerCase() === 'developer') {
-        errEl.innerText = "هذا الاسم محجوز للنظام!";
-        errEl.style.display = 'block';
-        return;
-      }
-
-      db.ref('users/' + username).once('value', (snapshot) => {
-        if (snapshot.exists()) {
-          errEl.innerText = "هذا الاسم مسجل بالفعل! يرجى اختيار اسم آخر أو تسجيل الدخول.";
-          errEl.style.display = 'block';
-        } else {
-          db.ref('users/' + username).set({ pass: pass, group: groupKey }).then(() => {
-            db.ref(`groups/${groupKey}/leaderboard`).once('value', (lbSnap) => {
-              let currentLb = lbSnap.val() || [];
-              if (!currentLb.includes(username)) {
-                currentLb.push(username);
-                db.ref(`groups/${groupKey}/leaderboard`).set(currentLb);
-              }
-            });
-
-            currentUser = { name: username, group: groupKey, role: 'student' };
-            saveAccountToDevice(currentUser);
-            localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-            showStudentDashboard(groupKey, username);
-            showToast("✨ تم إنشاء حسابك بنجاح!");
-          });
-        }
-      });
-    });
-
-    function showTeacherLoginPrompt() {
-      const pass = prompt("أدخلي كلمة مرور المعلمة:");
-      if (pass === 'dev') {
-        currentUser = { name: 'المعلمة أسماء', role: 'teacher' };
-        saveAccountToDevice(currentUser);
-        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-        showTeacherDashboard();
-      } else if (pass !== null) {
-        alert("كلمة المرور غير صحيحة!");
-      }
-    }
-
-    function logout() {
-      if (currentUser) {
-        removeSavedAccount(currentUser.name);
-      }
-      localStorage.removeItem('ahl_quran_user');
-      currentUser = null;
-      switchAccountView();
-    }
-
-    function deleteAccountSelf() {
-      if (confirm("هل أنت متأكد من حذف حسابك نهائياً؟ ستفقد الوصول ولن تتمكن من الاسترجاع.")) {
-        const uName = currentUser.name;
-        const gKey = currentUser.group;
-
-        db.ref('users/' + uName).remove().then(() => {
-          db.ref(`groups/${gKey}/leaderboard`).once('value', (snap) => {
-            let lb = snap.val() || [];
-            lb = lb.filter(item => item !== uName);
-            db.ref(`groups/${gKey}/leaderboard`).set(lb);
-          });
-          showToast("تم حذف الحساب بنجاح");
-          logout();
-        });
-      }
-    }
-
-    function changeGroupPrompt() {
-      const newGroup = prompt("اختر مجموعتك الجديدة:\n1. kid1 (المجموعة الأولى)\n2. mid2 (المجموعة الثانية)\n3. pro3 (المجموعة الثالثة)\n4. extra4 (المجموعة الأكبر)");
-      if (['kid1', 'mid2', 'pro3', 'extra4'].includes(newGroup)) {
-        const oldGroup = currentUser.group;
-        const uName = currentUser.name;
-
-        db.ref('users/' + uName + '/group').set(newGroup);
-
-        db.ref(`groups/${oldGroup}/leaderboard`).once('value', (snap) => {
-          let lb = snap.val() || [];
-          lb = lb.filter(item => item !== uName);
-          db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
-        });
-
-        db.ref(`groups/${newGroup}/leaderboard`).once('value', (snap) => {
-          let lb = snap.val() || [];
-          if (!lb.includes(uName)) lb.push(uName);
-          db.ref(`groups/${newGroup}/leaderboard`).set(lb);
-        });
-
-        currentUser.group = newGroup;
-        saveAccountToDevice(currentUser);
-        localStorage.setItem('ahl_quran_user', JSON.stringify(currentUser));
-        showStudentDashboard(newGroup, uName);
-        showToast("✨ تم تغيير المجموعة بنجاح");
-      } else if (newGroup !== null) {
-        alert("رمز المجموعة غير صحيح!");
-      }
-    }
-
-    // نظام إرسال التبليغات والأخطاء
-    function submitBugReport(inputId) {
-      const textEl = document.getElementById(inputId);
-      const bugText = textEl ? textEl.value.trim() : '';
-
-      if (!bugText) {
-        alert("يرجى كتابة تفاصيل الخطأ أو المشكلة أولاً!");
-        return;
-      }
-
-      const senderName = currentUser ? currentUser.name : "زائر/غير مسجل";
-      const senderRole = currentUser ? currentUser.role : "مجهول";
-
-      db.ref('bug_reports').push({
-        sender: senderName,
-        role: senderRole,
-        message: bugText,
-        time: new Date().toLocaleString('ar-EG')
-      }).then(() => {
-        showToast("🚀 تم إرسال التبليغ للمطور بنجاح، شكراً لمساعدتك!");
-        if (textEl) textEl.value = '';
-      }).catch(err => {
-        alert("حدث خطأ أثناء الإرسال، تحقق من الاتصال بالإنترنت.");
-      });
-    }
-
-    function showStudentDashboard(gKey, studentName) {
-      document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('student-screen').classList.remove('hidden');
+    // اختيار المجموعة للطلاب
+    function selectGroup(gKey) {
+      selectedGroupKey = gKey;
+      document.getElementById('selection-screen').classList.add('hidden');
+      document.getElementById('group-screen').classList.remove('hidden');
 
       const gData = groupsConfig[gKey];
-      document.getElementById('student-welcome').innerText = `أهلاً بك يا ${studentName} 🌸`;
-      document.getElementById('student-group-name').innerText = `المجموعة الحالية: ${gData.name}`;
+      document.getElementById('group-display-name').innerText = gData.name;
       document.getElementById('student-hero-title').innerText = gData.heroTitle;
-
-      scheduleDailyMotivationalNotice();
 
       db.ref('global_announcement').on('value', (snapshot) => {
         const text = snapshot.val() || "";
@@ -1184,7 +788,7 @@
         const content = val.content || "اقرا الPDF في جروب الواتس";
         const time = val.time || gData.time;
         const heroes = val.heroes || Array(gData.heroCount).fill("لم يحدد بعد");
-        const studentsList = val.leaderboard || [];
+        const studentsList = val.leaderboard || gData.defaultStudents;
 
         document.getElementById('student-content').innerText = content;
         
@@ -1194,33 +798,147 @@
 
         const lbBox = document.getElementById('student-leaderboard');
         lbBox.innerHTML = '';
-        if (studentsList.length === 0) {
-          lbBox.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب منضمين لهذه المجموعة حالياً.</li>';
-        } else {
-          studentsList.forEach((student, index) => {
-            let medal = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : `${index + 1}. `;
-            let isCurrent = student === studentName ? 'highlight' : '';
-            lbBox.innerHTML += `
-              <li class="leaderboard-item ${isCurrent}">
-                <span>${medal} ${student} ${student === studentName ? '(أنت 👤)' : ''}</span>
-                <span>المركز ${index + 1}</span>
-              </li>
-            `;
-          });
-        }
+        studentsList.forEach((student, index) => {
+          let medal = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : `${index + 1}. `;
+          lbBox.innerHTML += `
+            <li class="leaderboard-item">
+              <span>${medal} ${student}</span>
+              <span>المركز ${index + 1}</span>
+            </li>
+          `;
+        });
 
         startTimer(time, 'student-timer');
       });
     }
 
+    function backToGroupSelection() {
+      document.getElementById('group-screen').classList.add('hidden');
+      document.getElementById('selection-screen').classList.remove('hidden');
+    }
+
+    function showTeacherLoginPrompt() {
+      const pass = prompt("أدخلي كلمة المرور:");
+      if (pass === 'dev') {
+        showTeacherDashboard();
+      } else if (pass === 'developer') {
+        showDeveloperDashboard();
+      } else if (pass !== null) {
+        alert("كلمة المرور غير صحيحة!");
+      }
+    }
+
+    function logoutTeacher() {
+      document.getElementById('teacher-screen').classList.add('hidden');
+      document.getElementById('developer-screen').classList.add('hidden');
+      document.getElementById('selection-screen').classList.remove('hidden');
+      for (let key in activeIntervals) clearInterval(activeIntervals[key]);
+    }
+
+    // آليات التسجيل الصوتي والإرسال
+    async function toggleRecording() {
+      const sName = document.getElementById('audio-student-name').value.trim();
+      if (!sName) {
+        alert("يرجى كتابة اسمك الثلاثي أولاً قبل بدء التسجيل!");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = () => {
+            audioBase64Data = reader.result;
+            const audioPlayer = document.getElementById('audio-player');
+            audioPlayer.src = audioBase64Data;
+            document.getElementById('audio-preview-container').classList.remove('hidden');
+          };
+        };
+
+        mediaRecorder.start();
+        document.getElementById('record-btn').style.display = 'none';
+        document.getElementById('stop-btn').style.display = 'inline-block';
+        showToast("🎙️ بدأ التسجيل الان...");
+      } catch (err) {
+        alert("يرجى إعطاء صلاحية الميكروفون للمتصفح لتسجيل الصوت.");
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        document.getElementById('record-btn').style.display = 'inline-block';
+        document.getElementById('stop-btn').style.display = 'none';
+        showToast("🛑 تم إيقاف التسجيل!");
+      }
+    }
+
+    function sendAudioRecord() {
+      const sName = document.getElementById('audio-student-name').value.trim();
+      if (!sName || !audioBase64Data) {
+        alert("يرجى التأكد من كتابة اسمك وتسجيل المقطع الصوتي أولاً!");
+        return;
+      }
+
+      const gName = selectedGroupKey && groupsConfig[selectedGroupKey] ? groupsConfig[selectedGroupKey].name : "المجموعة العامة";
+
+      db.ref('audio_records').push({
+        studentName: sName,
+        groupName: gName,
+        audioData: audioBase64Data,
+        time: new Date().toLocaleString('ar-EG')
+      }).then(() => {
+        showToast("🚀 تم إرسال التسجيل الصوتي للمعلمة بنجاح!");
+        document.getElementById('audio-preview-container').classList.add('hidden');
+        document.getElementById('audio-student-name').value = '';
+        audioBase64Data = null;
+      }).catch(err => {
+        alert("تعذر إرسال التسجيل، يرجى المحاولة مرة أخرى.");
+      });
+    }
+
     function showTeacherDashboard() {
-      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('selection-screen').classList.add('hidden');
       document.getElementById('teacher-screen').classList.remove('hidden');
 
       db.ref('global_announcement').on('value', (snapshot) => {
         const text = snapshot.val() || "";
         const input = document.getElementById('teacher-announcement-input');
         if (input && document.activeElement !== input) input.value = text;
+      });
+
+      // استماع وتحميل التسجيلات الصوتية الواردة
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('teacher-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مرسلة حتى الآن.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key];
+          container.innerHTML += `
+            <div class="audio-report-card">
+              <div class="bug-report-header">
+                <span>👤 الطالب: <strong>${item.studentName}</strong> (${item.groupName})</span>
+                <span>⏱️ ${item.time}</span>
+              </div>
+              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
+              <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف التسجيل ✕</button>
+            </div>
+          `;
+        });
       });
 
       const container = document.getElementById('teacher-groups-container');
@@ -1262,8 +980,13 @@
           </div>
 
           <div class="leaderboard-section">
-            <h3>👥 قائمة ترتيب الطلاب المسجلين:</h3>
+            <h3>👥 قائمة ترتيب الطلاب:</h3>
             <ul id="teacher-lb-list-${gKey}" class="leaderboard-list"></ul>
+            
+            <div class="add-student-box">
+              <input type="text" id="add-student-input-${gKey}" placeholder="اسم الطالب الجديد...">
+              <button onclick="addStudent('${gKey}')" class="btn">إضافة طالب ➕</button>
+            </div>
           </div>
         `;
         container.appendChild(card);
@@ -1286,7 +1009,7 @@
             }
           }
 
-          teacherState[gKey] = val.leaderboard || [];
+          teacherState[gKey] = val.leaderboard || [...gData.defaultStudents];
           renderTeacherLeaderboard(gKey);
 
           startTimer(val.time || gData.time, `teacher-timer-${gKey}`);
@@ -1294,15 +1017,14 @@
       }
     }
 
+    function deleteAudioRecord(key) {
+      db.ref('audio_records/' + key).remove().then(() => { showToast("تم حذف التسجيل الصوتي"); });
+    }
+
     function renderTeacherLeaderboard(gKey) {
       const list = document.getElementById(`teacher-lb-list-${gKey}`);
       if (!list) return;
       list.innerHTML = '';
-      
-      if (!teacherState[gKey] || teacherState[gKey].length === 0) {
-        list.innerHTML = '<li style="text-align:center; padding:10px; color:#888;">لا يوجد طلاب مسجلين في هذه المجموعة</li>';
-        return;
-      }
 
       teacherState[gKey].forEach((student, index) => {
         list.innerHTML += `
@@ -1311,15 +1033,27 @@
             <div class="order-btn-group">
               <button class="order-btn" onclick="moveStudent('${gKey}', ${index}, -1)" title="تحريك للأعلى">▲</button>
               <button class="order-btn" onclick="moveStudent('${gKey}', ${index}, 1)" title="تحريك للأسفل">▼</button>
-              <button class="btn-danger" onclick="removeStudent('${gKey}', ${index})" title="حذف من الترتيب">إزالة 🗑️</button>
+              <button class="btn-danger" onclick="removeStudent('${gKey}', ${index})" title="حذف الطالب">حذف 🗑️</button>
             </div>
           </li>
         `;
       });
     }
 
+    function addStudent(gKey) {
+      const input = document.getElementById(`add-student-input-${gKey}`);
+      const name = input.value.trim();
+      if (name) {
+        if (!teacherState[gKey]) teacherState[gKey] = [];
+        teacherState[gKey].push(name);
+        input.value = '';
+        renderTeacherLeaderboard(gKey);
+        autoSaveData(gKey, true);
+      }
+    }
+
     function removeStudent(gKey, index) {
-      if (confirm(`هل أنتِ متأكدة من إزالة الطالب "${teacherState[gKey][index]}" من الترتيب؟`)) {
+      if (confirm(`هل أنتِ متأكدة من حذف الطالب "${teacherState[gKey][index]}"؟`)) {
         teacherState[gKey].splice(index, 1);
         renderTeacherLeaderboard(gKey);
         autoSaveData(gKey, true);
@@ -1338,30 +1072,29 @@
       }
     }
 
-    function triggerBugAudioAlert() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.3);
-      } catch (e) {}
+    function submitBugReport(inputId) {
+      const textEl = document.getElementById(inputId);
+      const bugText = textEl ? textEl.value.trim() : '';
+
+      if (!bugText) {
+        alert("يرجى كتابة تفاصيل الخطأ أو المشكلة أولاً!");
+        return;
+      }
+
+      db.ref('bug_reports').push({
+        sender: "مستخدم المنصة",
+        message: bugText,
+        time: new Date().toLocaleString('ar-EG')
+      }).then(() => {
+        showToast("🚀 تم إرسال التبليغ للمطور بنجاح!");
+        if (textEl) textEl.value = '';
+      });
     }
 
     function showDeveloperDashboard() {
-      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('selection-screen').classList.add('hidden');
       document.getElementById('developer-screen').classList.remove('hidden');
 
-      if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission();
-      }
-
-      initialBugLoad = true;
       db.ref('bug_reports').on('value', (snapshot) => {
         const reports = snapshot.val() || {};
         const container = document.getElementById('developer-bug-reports-list');
@@ -1369,8 +1102,7 @@
 
         const keys = Object.keys(reports).reverse();
         if (keys.length === 0) {
-          container.innerHTML = '<p style="text-align: center; color: var(--emerald-primary); font-weight: bold;">لا يوجد أي أخطاء برمجية مسجلة حالياً 🎉</p>';
-          initialBugLoad = false;
+          container.innerHTML = '<p style="text-align: center; color: var(--emerald-primary); font-weight: bold;">لا يوجد أي أخطاء برمجية مسجلة 🎉</p>';
           return;
         }
 
@@ -1379,7 +1111,6 @@
           container.innerHTML += `
             <div class="bug-report-card">
               <div class="bug-report-header">
-                <span>👤 المرسل: <strong>${item.sender}</strong> (${item.role})</span>
                 <span>⏱️ ${item.time}</span>
               </div>
               <div class="bug-report-text">${item.message}</div>
@@ -1387,124 +1118,16 @@
             </div>
           `;
         });
-
-        if (!initialBugLoad && keys.length > 0) {
-          const latest = reports[keys[0]];
-          showToast(`🚨 تبليغ جديد من ${latest.sender}!`);
-          triggerBugAudioAlert();
-
-          if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("🚨 خطأ برمجي جديد مٌبلغ عنه!", {
-              body: `من: ${latest.sender}\nالمحتوى: ${latest.message}`,
-              icon: "logo.jpg"
-            });
-          }
-        }
-
-        initialBugLoad = false;
-      });
-
-      // عرض جدول المستخدمين مع إمكانية تغيير المجموعة فورياً
-      db.ref('users').on('value', (snapshot) => {
-        const users = snapshot.val() || {};
-        const tbody = document.getElementById('dev-users-table');
-        tbody.innerHTML = '';
-
-        let count = 0;
-        for (let uName in users) {
-          count++;
-          const uData = users[uName];
-
-          tbody.innerHTML += `
-            <tr>
-              <td><strong>${uName}</strong></td>
-              <td style="color: var(--gold-hover); font-weight: bold;">${uData.pass}</td>
-              <td>
-                <select class="dev-group-select" onchange="changeUserGroupDirectly('${uName}', '${uData.group}', this.value)">
-                  <option value="kid1" ${uData.group === 'kid1' ? 'selected' : ''}>المجموعة الأولى</option>
-                  <option value="mid2" ${uData.group === 'mid2' ? 'selected' : ''}>المجموعة الثانية</option>
-                  <option value="pro3" ${uData.group === 'pro3' ? 'selected' : ''}>المجموعة الثالثة</option>
-                  <option value="extra4" ${uData.group === 'extra4' ? 'selected' : ''}>المجموعة الأكبر</option>
-                </select>
-              </td>
-              <td style="display: flex; gap: 6px;">
-                <button class="btn" style="padding: 4px 8px; font-size: 0.85rem;" onclick="editUserByDev('${uName}', '${uData.pass}', '${uData.group}')">تعديل ✏️</button>
-                <button class="btn-danger" onclick="kickUserByDev('${uName}', '${uData.group}')">طرد/حذف 🗑️</button>
-              </td>
-            </tr>
-          `;
-        }
-
-        if (count === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أي حسابات مسجلة حالياً.</td></tr>';
-        }
-      });
-    }
-
-    // دالة تغيير مجموعة الحساب مباشرة من القائمة المنسدلة للمطور
-    function changeUserGroupDirectly(uName, oldGroup, newGroup) {
-      if (oldGroup === newGroup) return;
-
-      db.ref('users/' + uName + '/group').set(newGroup).then(() => {
-        // إزالة من الترتيب القديم
-        db.ref(`groups/${oldGroup}/leaderboard`).once('value', (s) => {
-          let lb = s.val() || [];
-          lb = lb.filter(x => x !== uName);
-          db.ref(`groups/${oldGroup}/leaderboard`).set(lb);
-        });
-
-        // إضافة للترتيب الجديد
-        db.ref(`groups/${newGroup}/leaderboard`).once('value', (s) => {
-          let lb = s.val() || [];
-          if (!lb.includes(uName)) lb.push(uName);
-          db.ref(`groups/${newGroup}/leaderboard`).set(lb);
-        });
-
-        showToast(`✨ تم نقل ${uName} إلى المجموعة الجديدة بنجاح`);
       });
     }
 
     function deleteSingleBugReport(key) {
-      db.ref('bug_reports/' + key).remove().then(() => {
-        showToast("تم حذف التبليغ");
-      });
+      db.ref('bug_reports/' + key).remove().then(() => { showToast("تم حذف التبليغ"); });
     }
 
     function clearAllBugReports() {
       if (confirm("هل أنت متأكد من مسح جميع التبليغات؟")) {
-        db.ref('bug_reports').remove().then(() => {
-          showToast("تم مسح كافة التبليغات");
-        });
-      }
-    }
-
-    function editUserByDev(uName, oldPass, oldGroup) {
-      const newPass = prompt(`تعديل كلمة السر لـ (${uName}):`, oldPass);
-      if (newPass === null) return;
-
-      const newGroup = prompt(`تعديل مجموعة (${uName}):\n1. kid1\n2. mid2\n3. pro3\n4. extra4`, oldGroup);
-      if (newGroup === null) return;
-
-      if (groupsConfig[newGroup]) {
-        changeUserGroupDirectly(uName, oldGroup, newGroup);
-        db.ref('users/' + uName + '/pass').set(newPass).then(() => {
-          showToast("✨ تم تعديل بيانات الحساب بنجاح");
-        });
-      } else {
-        alert("رمز المجموعة غير صحيح!");
-      }
-    }
-
-    function kickUserByDev(uName, gKey) {
-      if (confirm(`هل أنت متأكد من طرد وحذف حساب "${uName}" نهائياً من المنصة؟`)) {
-        db.ref('users/' + uName).remove().then(() => {
-          db.ref(`groups/${gKey}/leaderboard`).once('value', (s) => {
-            let lb = s.val() || [];
-            lb = lb.filter(x => x !== uName);
-            db.ref(`groups/${gKey}/leaderboard`).set(lb);
-          });
-          showToast(`تم طرد ${uName} بنجاح`);
-        });
+        db.ref('bug_reports').remove().then(() => { showToast("تم مسح كافة التبليغات"); });
       }
     }
 
@@ -1534,7 +1157,7 @@
           content: content,
           time: time,
           heroes: heroes,
-          leaderboard: teacherState[gKey] || []
+          leaderboard: teacherState[gKey] || gData.defaultStudents
         }).then(() => { showToast("✨ تم حفظ التعديلات تلقائياً"); });
       };
 
