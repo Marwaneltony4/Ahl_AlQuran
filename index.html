@@ -461,9 +461,6 @@
       box-shadow: var(--shadow-sm);
     }
 
-    /* ========================================================
-       🎨 استايل وديكور بار التسجيل الصوتي المطور والمحسن
-       ======================================================== */
     .audio-recorder-box {
       background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(217, 119, 6, 0.06) 100%);
       border: 2px dashed var(--emerald-primary);
@@ -721,7 +718,7 @@
         <div id="student-content" class="content-box">اقرا الPDF في جروب الواتس</div>
       </div>
 
-      <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة (التصميم المطور والمحدث) -->
+      <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة -->
       <div class="audio-recorder-box">
         <div class="audio-recorder-header">
           <h3 class="audio-recorder-title">🎙️ تسجيل التسميع الصوتي للمعلمة</h3>
@@ -880,14 +877,15 @@
     let globalAnnouncementTimer = null;
     let selectedGroupKey = null;
 
-    let mediaRecorder;
+    let mediaRecorder = null;
+    let audioStream = null;
     let audioChunks = [];
     let audioBase64Data = null;
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
       const isDark = document.body.classList.contains('dark-mode');
-      document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-icon').innerText = isDark ? '☀️️' : '🌙';
       document.getElementById('theme-text').innerText = isDark ? 'الوضع الفاتح' : 'الوضع الداكن';
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
@@ -952,6 +950,7 @@
     }
 
     function backToGroupSelection() {
+      resetAudioRecorder();
       document.getElementById('group-screen').classList.add('hidden');
       document.getElementById('selection-screen').classList.remove('hidden');
     }
@@ -975,8 +974,15 @@
     }
 
     // ==========================================
-    // آليات ومميزات التسجيل الصوتي وإعادة الضبط
+    // آليات المايك وإغلاق مسارات الصوت بالكامل
     // ==========================================
+    function stopAudioTracks() {
+      if (audioStream) {
+        audioStream.getTracks().forEach(track => track.stop());
+        audioStream = null;
+      }
+    }
+
     async function toggleRecording() {
       const sName = document.getElementById('audio-student-name').value.trim();
       if (!sName) {
@@ -985,13 +991,14 @@
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(audioStream);
         audioChunks = [];
 
         mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
 
         mediaRecorder.onstop = () => {
+          stopAudioTracks(); // إيقاف المايك تماماً فور انتهاء التسجيل لتختفي النقطة الخضراء
           const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
           const reader = new FileReader();
           reader.readAsDataURL(audioBlob);
@@ -1018,14 +1025,17 @@
         document.getElementById('record-btn').style.display = 'inline-flex';
         document.getElementById('stop-btn').style.display = 'none';
         showToast("🛑 تم إيقاف التسجيل!");
+      } else {
+        stopAudioTracks();
       }
     }
 
-    // دالة حذف وإعادة ضبط التسجيل الصوتي بالكامل
     function resetAudioRecorder() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
+      stopAudioTracks(); // ضمان إغلاق وتفريغ مسارات المايك النقطة الخضراء
+
       audioChunks = [];
       audioBase64Data = null;
 
@@ -1038,7 +1048,7 @@
       document.getElementById('audio-preview-container').classList.add('hidden');
       document.getElementById('record-btn').style.display = 'inline-flex';
       document.getElementById('stop-btn').style.display = 'none';
-      showToast("🔄 تم إلغاء وإعادة ضبط خانة التسجيل");
+      showToast("🔄 تم إيقاف المايك وإعادة ضبط التسجيل");
     }
 
     function sendAudioRecord() {
@@ -1057,7 +1067,7 @@
         time: new Date().toLocaleString('ar-EG')
       }).then(() => {
         showToast("🚀 تم إرسال التسجيل الصوتي للمعلمة بنجاح!");
-        resetAudioRecorder(); // إغلاق وإعادة ضبط الخانة تلقائياً عند النجاح
+        resetAudioRecorder();
       }).catch(err => {
         alert("تعذر إرسال التسجيل، يرجى المحاولة مرة أخرى.");
       });
