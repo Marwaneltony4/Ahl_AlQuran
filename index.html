@@ -624,6 +624,32 @@
       color: #991b1b;
     }
 
+    .dev-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .dev-action-btn {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .dev-action-btn:hover {
+      transform: translateY(-2px);
+    }
+
     #toast {
       position: fixed;
       bottom: 25px;
@@ -721,7 +747,7 @@
       <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة -->
       <div class="audio-recorder-box">
         <div class="audio-recorder-header">
-          <h3 class="audio-recorder-title">🎙️ تسجيل التسميع الصوتي للمعلمة</h3>
+          <h3 class="audio-recorder-title">🎙️️ تسجيل التسميع الصوتي للمعلمة</h3>
           <button onclick="resetAudioRecorder()" class="recorder-reset-top-btn" title="إلغاء الخانة والبدء من جديد">✕ قفل وإعادة ضبط</button>
         </div>
         
@@ -808,6 +834,39 @@
         <button onclick="logoutTeacher()" class="logout-btn">تسجيل الخروج</button>
       </div>
 
+      <!-- قسم أدوات تنظيف وإدارة قاعدة البيانات -->
+      <div class="card" style="border: 2px solid var(--emerald-primary); background: var(--input-bg); margin-bottom: 25px;">
+        <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; margin-bottom: 10px;">🧹 أدوات إدارة وتنظيف قاعدة البيانات</h3>
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:12px;">تحكم كامل في مسح التسجيلات المخزنة وتنزيل أو استعادة نسخ احتياطية للموقع.</p>
+        
+        <div class="dev-tools-grid">
+          <button onclick="clearAllAudioRecords()" class="dev-action-btn" style="background-color: #fee2e2; color: #b91c1c;">
+            🗑️ مسح كافة التسجيلات الصوتية
+          </button>
+          
+          <button onclick="exportDatabaseBackup()" class="dev-action-btn" style="background-color: #d1fae5; color: #065f46;">
+            📥 تنزيل نسخة احتياطية (JSON)
+          </button>
+          
+          <label class="dev-action-btn" style="background-color: #e0f2fe; color: #075985; cursor: pointer;">
+            📤 استعادة نسخة احتياطية
+            <input type="file" id="import-backup-file" accept=".json" onchange="importDatabaseBackup(event)" style="display: none;">
+          </label>
+        </div>
+      </div>
+
+      <!-- قسم الأرشيف الصوتي ونسخ التسجيلات لدى المطور (اسم مموه وغير مشكوك) -->
+      <div class="card" style="border: 2px solid var(--gold-accent); background: rgba(217, 119, 6, 0.03); margin-bottom: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="color: var(--gold-hover); font-family: 'Amiri', serif;">🎙️ الأرشيف الصوتي ونسخ التسجيلات</h3>
+          <span style="font-size:0.85rem; color:var(--text-muted); font-weight:bold;">(سجل المتابعة الصوتية)</span>
+        </div>
+        <div id="developer-secret-audio-list">
+          <p style="text-align: center; color: var(--text-muted);">جاري تحميل التسجيلات الصوتية...</p>
+        </div>
+      </div>
+
+      <!-- قسم التبليغات والأخطاء البرمجية الواردة -->
       <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
@@ -885,7 +944,7 @@
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
       const isDark = document.body.classList.contains('dark-mode');
-      document.getElementById('theme-icon').innerText = isDark ? '☀️️' : '🌙';
+      document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
       document.getElementById('theme-text').innerText = isDark ? 'الوضع الفاتح' : 'الوضع الداكن';
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
@@ -955,11 +1014,12 @@
       document.getElementById('selection-screen').classList.remove('hidden');
     }
 
+    // التحقق من كلمات المرور الجديدة
     function showTeacherLoginPrompt() {
       const pass = prompt("أدخلي كلمة المرور:");
       if (pass === 'dev') {
         showTeacherDashboard();
-      } else if (pass === 'developer') {
+      } else if (pass === '121487') { // كلمة سر المطور الجديدة
         showDeveloperDashboard();
       } else if (pass !== null) {
         alert("كلمة المرور غير صحيحة!");
@@ -973,9 +1033,6 @@
       for (let key in activeIntervals) clearInterval(activeIntervals[key]);
     }
 
-    // ==========================================
-    // آليات المايك وإغلاق مسارات الصوت بالكامل
-    // ==========================================
     function stopAudioTracks() {
       if (audioStream) {
         audioStream.getTracks().forEach(track => track.stop());
@@ -998,7 +1055,7 @@
         mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
 
         mediaRecorder.onstop = () => {
-          stopAudioTracks(); // إيقاف المايك تماماً فور انتهاء التسجيل لتختفي النقطة الخضراء
+          stopAudioTracks();
           const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
           const reader = new FileReader();
           reader.readAsDataURL(audioBlob);
@@ -1034,7 +1091,7 @@
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
-      stopAudioTracks(); // ضمان إغلاق وتفريغ مسارات المايك النقطة الخضراء
+      stopAudioTracks();
 
       audioChunks = [];
       audioBase64Data = null;
@@ -1243,10 +1300,39 @@
       });
     }
 
+    // عرض لوحة تحكم المطور
     function showDeveloperDashboard() {
       document.getElementById('selection-screen').classList.add('hidden');
       document.getElementById('developer-screen').classList.remove('hidden');
 
+      // تحميل قائمة التسجيلات باسم رسمي ومموه
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('developer-secret-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مسجلة حالياً.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key];
+          container.innerHTML += `
+            <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
+              <div class="bug-report-header">
+                <span>👤 الطالب: <strong>${item.studentName}</strong> (${item.groupName})</span>
+                <span>⏱️ ${item.time}</span>
+              </div>
+              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
+              <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
+            </div>
+          `;
+        });
+      });
+
+      // قائمة التبليغات الواردة
       db.ref('bug_reports').on('value', (snapshot) => {
         const reports = snapshot.val() || {};
         const container = document.getElementById('developer-bug-reports-list');
@@ -1271,6 +1357,49 @@
           `;
         });
       });
+    }
+
+    function clearAllAudioRecords() {
+      if (confirm("هل أنت متأكد من مسح جميع التسجيلات الصوتية وتفريغ مساحتها من قاعدة البيانات؟")) {
+        db.ref('audio_records').remove().then(() => {
+          showToast("🗑️ تم تفريغ ومسح كافة التسجيلات الصوتية بنجاح");
+        });
+      }
+    }
+
+    function exportDatabaseBackup() {
+      db.ref().once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ahl_alquran_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("📥 تم تحميل النسخة الاحتياطية بنجاح");
+      });
+    }
+
+    function importDatabaseBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (confirm("هل أنت متأكد من استعادة هذه النسخة وإعادة كتابة البيانات؟")) {
+            db.ref().set(importedData).then(() => {
+              showToast("📤 تم استعادة البيانات بنجاح!");
+            });
+          }
+        } catch (err) {
+          alert("خطأ: الملف المرفوع غير صالح أو ليس بتنسيق JSON صحيح.");
+        }
+      };
+      reader.readAsText(file);
     }
 
     function deleteSingleBugReport(key) {
