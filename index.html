@@ -762,7 +762,40 @@
         <div class="form-group" style="margin-bottom: 14px;">
           <label>اسم الطالب المسجل:</label>
           <input type="text" id="audio-student-name" placeholder="اكتب اسمك الثلاثي قبل التسجيل..." required>
-          <!-- شاشة المعلمة -->
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
+          <button id="record-btn" onclick="toggleRecording()" class="recorder-btn-start">بدء التسجيل 🎙️</button>
+          <button id="stop-btn" onclick="stopRecording()" class="recorder-btn-stop" style="display: none;">إيقاف التسجيل 🛑</button>
+        </div>
+
+        <div id="audio-preview-container" class="audio-preview-box hidden">
+          <p style="font-weight: bold; color: var(--emerald-dark);">معاينة المقطع الصوتي قبل الإرسال:</p>
+          <audio id="audio-player" controls></audio>
+          
+          <div class="audio-action-btns">
+            <button onclick="sendAudioRecord()" class="btn-send-audio">إرسال التسجيل للمعلمة 🚀</button>
+            <button onclick="resetAudioRecorder()" class="btn-discard-audio">🗑️ حذف التسجيل وإعادة المحاولة</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="students-board-section">
+        <h3>👥 طلاب المجموعة</h3>
+        <ul id="student-board-list" class="students-grid-list"></ul>
+      </div>
+
+      <!-- قسم التبليغ عن مشكلة برمجية -->
+      <div class="card" style="margin-top: 25px; border-color: var(--danger-color); background: var(--input-bg);">
+        <h4 style="color: var(--danger-color); margin-bottom: 8px;">🐛 واجهتك مشكلة أو خطأ برمجي؟</h4>
+        <div class="form-group">
+          <textarea id="bug-report-text-student" rows="2" placeholder="اشرح المشكلة هنا..."></textarea>
+        </div>
+        <button onclick="submitBugReport('bug-report-text-student')" class="btn-danger" style="width: 100%;">إرسال التقرير للمطور 🚀</button>
+      </div>
+    </div>
+
+    <!-- شاشة المعلمة -->
     <div id="teacher-screen" class="hidden">
       <div class="welcome-card">
         <div class="welcome-info">
@@ -845,7 +878,7 @@
       <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
-          <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️️</button>
+          <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️</button>
         </div>
         <div id="developer-bug-reports-list">
           <p style="text-align: center; color: var(--text-muted);">جاري تحميل التبليغات...</p>
@@ -963,6 +996,7 @@
         const heroes = val.heroes || Array(gData.heroCount).fill("لم يحدد بعد");
         const studentsList = val.leaderboard || gData.defaultStudents;
 
+        // تحديث إطار وعارض ملف الـ PDF ليكون متاحاً للقراءة
         document.getElementById('student-pdf-iframe').src = pdfUrl;
         document.getElementById('student-pdf-download-btn').href = pdfUrl;
         
@@ -1115,6 +1149,7 @@
         if (input && document.activeElement !== input) input.value = text;
       });
 
+      // جلب كافة التسجيلات لكل المجاميع في شاشة المعلمة
       db.ref('audio_records').on('value', (snapshot) => {
         const records = snapshot.val() || {};
         const container = document.getElementById('teacher-audio-list');
@@ -1244,4 +1279,222 @@
         teacherState[gKey].push(name);
         input.value = '';
         renderTeacherLeaderboard(gKey);
-        autoSaveD
+        autoSaveData(gKey, true);
+      }
+    }
+
+    function removeStudent(gKey, index) {
+      if (confirm(`هل أنتِ متأكدة من حذف الطالب "${teacherState[gKey][index]}"؟`)) {
+        teacherState[gKey].splice(index, 1);
+        renderTeacherLeaderboard(gKey);
+        autoSaveData(gKey, true);
+      }
+    }
+
+    function submitBugReport(inputId) {
+      const textEl = document.getElementById(inputId);
+      const bugText = textEl ? textEl.value.trim() : '';
+
+      if (!bugText) {
+        alert("يرجى كتابة تفاصيل الخطأ أو المشكلة أولاً!");
+        return;
+      }
+
+      db.ref('bug_reports').push({
+        sender: "مستخدم المنصة",
+        message: bugText,
+        time: new Date().toLocaleString('ar-EG')
+      }).then(() => {
+        showToast("🚀 تم إرسال التبليغ للمطور بنجاح!");
+        if (textEl) textEl.value = '';
+      });
+    }
+
+    function showDeveloperDashboard() {
+      document.getElementById('selection-screen').classList.add('hidden');
+      document.getElementById('developer-screen').classList.remove('hidden');
+
+      // تحميل كافة تسجيلات الصوت لكل المجاميع لصفحة المطور
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('developer-secret-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مسجلة حالياً.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key];
+          container.innerHTML += `
+            <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
+              <div class="bug-report-header">
+                <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
+                <span>⏱️ ${item.time}</span>
+              </div>
+              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
+              <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
+            </div>
+          `;
+        });
+      });
+
+      db.ref('bug_reports').on('value', (snapshot) => {
+        const reports = snapshot.val() || {};
+        const container = document.getElementById('developer-bug-reports-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(reports).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--emerald-primary); font-weight: bold;">لا يوجد أي أخطاء برمجية مسجلة 🎉</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = reports[key];
+          container.innerHTML += `
+            <div class="bug-report-card">
+              <div class="bug-report-header">
+                <span>⏱️ ${item.time}</span>
+              </div>
+              <div class="bug-report-text">${item.message}</div>
+              <button onclick="deleteSingleBugReport('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف البلاغ ✕</button>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function clearAllAudioRecords() {
+      if (confirm("هل أنت متأكد من مسح جميع التسجيلات الصوتية وتفريغ مساحتها من قاعدة البيانات؟")) {
+        db.ref('audio_records').remove().then(() => {
+          showToast("🗑️ تم تفريغ ومسح كافة التسجيلات الصوتية بنجاح");
+        });
+      }
+    }
+
+    function exportDatabaseBackup() {
+      db.ref().once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ahl_alquran_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("📥 تم تحميل النسخة الاحتياطية بنجاح");
+      });
+    }
+
+    function importDatabaseBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (confirm("هل أنت متأكد من استعادة هذه النسخة وإعادة كتابة البيانات؟")) {
+            db.ref().set(importedData).then(() => {
+              showToast("📤 تم استعادة البيانات بنجاح!");
+            });
+          }
+        } catch (err) {
+          alert("خطأ: الملف المرفوع غير صالح أو ليس بتنسيق JSON صحيح.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function deleteSingleBugReport(key) {
+      db.ref('bug_reports/' + key).remove().then(() => { showToast("تم حذف التبليغ"); });
+    }
+
+    function clearAllBugReports() {
+      if (confirm("هل أنت متأكد من مسح جميع التبليغات؟")) {
+        db.ref('bug_reports').remove().then(() => { showToast("تم مسح كافة التبليغات"); });
+      }
+    }
+
+    function autoSaveGlobalAnnouncement() {
+      if (globalAnnouncementTimer) clearTimeout(globalAnnouncementTimer);
+      globalAnnouncementTimer = setTimeout(() => {
+        const val = document.getElementById('teacher-announcement-input').value;
+        db.ref('global_announcement').set(val).then(() => { showToast("✨ تم حفظ الإعلان الموحد تلقائياً"); });
+      }, 1000);
+    }
+
+    function autoSaveData(gKey, immediate = false) {
+      if (saveDebounceTimers[gKey]) clearTimeout(saveDebounceTimers[gKey]);
+
+      const executeSave = () => {
+        const gData = groupsConfig[gKey];
+        const pdfUrl = document.getElementById(`teacher-pdf-${gKey}`).value;
+        const time = document.getElementById(`teacher-time-${gKey}`).value;
+        
+        let heroes = [];
+        for (let i = 0; i < gData.heroCount; i++) {
+          const val = document.getElementById(`teacher-hero-${gKey}-${i}`).value.trim();
+          heroes.push(val || "لم يحدد بعد");
+        }
+
+        db.ref(`groups/${gKey}`).set({
+          pdfUrl: pdfUrl,
+          time: time,
+          heroes: heroes,
+          leaderboard: teacherState[gKey] || gData.defaultStudents
+        }).then(() => { showToast("✨ تم حفظ التعديلات تلقائياً"); });
+      };
+
+      if (immediate) executeSave();
+      else saveDebounceTimers[gKey] = setTimeout(executeSave, 1000);
+    }
+
+    function startTimer(targetTimeStr, elementId) {
+      if (activeIntervals[elementId]) clearInterval(activeIntervals[elementId]);
+
+      function update() {
+        const now = new Date();
+        const [hours, minutes] = targetTimeStr.split(':').map(Number);
+        
+        const targetDays = [2, 6]; 
+        let nextSession = null;
+
+        for (let i = 0; i <= 7; i++) {
+          let testDate = new Date();
+          testDate.setDate(now.getDate() + i);
+          testDate.setHours(hours, minutes, 0, 0);
+
+          let dayOfWeek = testDate.getDay();
+
+          if (targetDays.includes(dayOfWeek) && testDate > now) {
+            nextSession = testDate;
+            break;
+          }
+        }
+
+        if (!nextSession) return;
+
+        const diff = nextSession - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const el = document.getElementById(elementId);
+        if (el) {
+          el.innerText = `${days} يوم و ${h} ساعة و ${m} دقيقة و ${s} ثانية`;
+        }
+      }
+
+      update();
+      activeIntervals[elementId] = setInterval(update, 1000);
+    }
+  </script>
+</body>
+</html>
