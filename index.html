@@ -67,6 +67,73 @@
       margin: 0 auto;
     }
 
+    /* ==================== Intro Overlay ==================== */
+    #intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(6, 78, 59, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .intro-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 35px 25px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--gold-accent);
+      animation: zoomIn 0.4s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .intro-card h2 {
+      font-family: 'Amiri', serif;
+      font-size: 2.2rem;
+      color: var(--emerald-dark);
+      margin-bottom: 8px;
+    }
+
+    .intro-card p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .btn-intro {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(5, 150, 105, 0.3);
+      width: 100%;
+    }
+
+    .btn-intro:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(5, 150, 105, 0.4);
+    }
+
     header {
       text-align: center;
       margin-bottom: 25px;
@@ -375,29 +442,29 @@
       color: var(--text-dark);
     }
 
-    /* مربع الـ PDF الداخلي المطور بالبلور الخفيف */
-    .pdf-viewer-container {
-      background: rgba(255, 255, 255, 0.65);
+    /* قسم المراجعة المطور مع زر الشاشة والتصغير المباشر */
+    .pdf-section-box {
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      border-radius: 20px;
+      border-radius: 18px;
       padding: 20px;
       text-align: center;
       margin-bottom: 25px;
       border: 2px solid var(--emerald-primary);
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-sm);
     }
 
-    body.dark-mode .pdf-viewer-container {
+    body.dark-mode .pdf-section-box {
       background: rgba(30, 41, 59, 0.7);
     }
 
     .pdf-frame {
       width: 100%;
-      height: 580px;
+      height: 520px;
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      margin-top: 10px;
+      border-radius: 12px;
+      margin-top: 15px;
       background-color: var(--card-bg);
     }
 
@@ -696,6 +763,15 @@
 </head>
 <body>
 
+  <!-- شاشة الانترو والترحيب عند فتح الموقع -->
+  <div id="intro-overlay">
+    <div class="intro-card">
+      <h2>أهلاً وسهلاً بكم 📖</h2>
+      <p>مرحباً بكم في **منصة أهل القرآن الكريم** للمتابعة اللحظية، التسميع الصوتي والمراجعة التفاعلية ✨</p>
+      <button onclick="closeIntro()" class="btn-intro">الدخول للمنصة 🚀</button>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <button onclick="toggleDarkMode()" class="theme-toggle-btn">
@@ -729,7 +805,7 @@
     <div id="public-audio-screen" class="card hidden">
       <div class="dashboard-header">
         <div>
-          <h2 class="group-title">🎙️ التسجيلات الصوتية (لكافة المجاميع)</h2>
+          <h2 class="group-title">🎙️️ التسجيلات الصوتية (لكافة المجاميع)</h2>
           <p style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;">يمكن لجميع الطلاب الاستماع لتسجيلات وتسميع زملائهم</p>
         </div>
         <button onclick="backToSelectionFromAudio()" class="logout-btn">الرجوع للقائمة 🔄</button>
@@ -769,10 +845,13 @@
         <div id="student-heroes" class="hero-list"></div>
       </div>
 
-      <!-- قسم المراجعة (عرض الـ PDF مباشرة بمربع واسع وبلور خلفه) -->
-      <div class="pdf-viewer-container">
-        <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; font-size: 1.6rem; margin-bottom: 8px;">📖 المراجعة</h3>
-        <iframe id="student-pdf-iframe" class="pdf-frame" src=""></iframe>
+      <!-- قسم المراجعة بأسلوب خفيف وموفر للمساحة مع خيار إظهار الـ PDF بضغطة زر -->
+      <div class="pdf-section-box">
+        <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; font-size: 1.55rem; margin-bottom: 12px;">📖 المراجعة</h3>
+        <button id="toggle-pdf-btn" onclick="togglePdfViewer()" class="btn" style="width: auto; padding: 10px 24px; font-size: 1rem;">عرض ملف المراجعة (PDF) 📄</button>
+        <div id="pdf-container-wrapper" class="hidden" style="margin-top: 15px;">
+          <iframe id="student-pdf-iframe" class="pdf-frame" src=""></iframe>
+        </div>
       </div>
 
       <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة -->
@@ -861,7 +940,7 @@
     <!-- لوحة تحكم المطور السرية -->
     <div id="developer-screen" class="card hidden">
       <div class="dashboard-header">
-        <h2 class="group-title" style="color: var(--gold-hover);">🛠️️ لوحة تحكم المطور السرية (Developer)</h2>
+        <h2 class="group-title" style="color: var(--gold-hover);">🛠️ لوحة تحكم المطور السرية (Developer)</h2>
         <button onclick="logoutTeacher()" class="logout-btn">تسجيل الخروج</button>
       </div>
 
@@ -972,6 +1051,13 @@
     let audioChunks = [];
     let audioBase64Data = null;
 
+    function closeIntro() {
+      const intro = document.getElementById('intro-overlay');
+      intro.style.opacity = '0';
+      intro.style.visibility = 'hidden';
+      setTimeout(() => { intro.classList.add('hidden'); }, 500);
+    }
+
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
       const isDark = document.body.classList.contains('dark-mode');
@@ -989,6 +1075,18 @@
       toast.innerText = message;
       toast.classList.add('show');
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
+    }
+
+    function togglePdfViewer() {
+      const wrapper = document.getElementById('pdf-container-wrapper');
+      const btn = document.getElementById('toggle-pdf-btn');
+      if (wrapper.classList.contains('hidden')) {
+        wrapper.classList.remove('hidden');
+        btn.innerText = 'إخفاء ملف المراجعة ✕';
+      } else {
+        wrapper.classList.add('hidden');
+        btn.innerText = 'عرض ملف المراجعة (PDF) 📄';
+      }
     }
 
     function selectGroup(gKey) {
@@ -1014,13 +1112,15 @@
 
       db.ref(`groups/${gKey}`).on('value', (snapshot) => {
         const val = snapshot.val() || {};
-        const pdfUrl = val.pdfUrl || "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+        const pdfData = val.pdfData || "";
         const time = val.time || gData.time;
         const heroes = val.heroes || Array(gData.heroCount).fill("لم يحدد بعد");
         const studentsList = val.leaderboard || gData.defaultStudents;
 
-        document.getElementById('student-pdf-iframe').src = pdfUrl;
-        
+        if (pdfData) {
+          document.getElementById('student-pdf-iframe').src = pdfData;
+        }
+
         const heroesBox = document.getElementById('student-heroes');
         heroesBox.innerHTML = '';
         heroes.forEach(h => { heroesBox.innerHTML += `<div class="hero-item">${h}</div>`; });
@@ -1135,7 +1235,7 @@
         mediaRecorder.start();
         document.getElementById('record-btn').style.display = 'none';
         document.getElementById('stop-btn').style.display = 'inline-flex';
-        showToast("🎙️ بدأ التسجيل الان...");
+        showToast("🎙️️ بدأ التسجيل الان...");
       } catch (err) {
         alert("يرجى إعطاء صلاحية الميكروفون للمتصفح لتسجيل الصوت.");
       }
@@ -1193,6 +1293,27 @@
       }).catch(err => {
         alert("تعذر إرسال التسجيل، يرجى المحاولة مرة أخرى.");
       });
+    }
+
+    // رفع ملف PDF وتحويله لبيانات مباشرة لـ Firebase
+    function handlePdfUpload(event, gKey) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.type !== "application/pdf") {
+        alert("يرجى إرفاق ملف بتنسيق PDF فقط!");
+        return;
+      }
+
+      showToast("⏳ جاري رفع ملف الـ PDF...");
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Pdf = e.target.result;
+        db.ref(`groups/${gKey}/pdfData`).set(base64Pdf).then(() => {
+          showToast("✨ تم رفع ملف الـ PDF المباشر بنجاح!");
+        });
+      };
+      reader.readAsDataURL(file);
     }
 
     function showTeacherDashboard() {
@@ -1265,8 +1386,8 @@
           ${heroesInputsHTML}
 
           <div class="form-group">
-            <label>رابط ملف الـ PDF الخاص بالمراجعة:</label>
-            <input type="url" id="teacher-pdf-${gKey}" placeholder="ضع رابط الـ PDF الخاص بالمجموعة هنا..." oninput="autoSaveData('${gKey}')">
+            <label>رفع ملف الـ PDF المباشر للمراجعة:</label>
+            <input type="file" accept="application/pdf" onchange="handlePdfUpload(event, '${gKey}')">
           </div>
 
           <div class="students-board-section">
@@ -1284,9 +1405,6 @@
         db.ref(`groups/${gKey}`).on('value', (snapshot) => {
           const val = snapshot.val() || {};
           
-          if (document.activeElement !== document.getElementById(`teacher-pdf-${gKey}`)) {
-            document.getElementById(`teacher-pdf-${gKey}`).value = val.pdfUrl || "";
-          }
           if (document.activeElement !== document.getElementById(`teacher-time-${gKey}`)) {
             document.getElementById(`teacher-time-${gKey}`).value = val.time || gData.time;
           }
@@ -1386,7 +1504,7 @@
             <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
               <div class="bug-report-header">
                 <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span>⏱️ ${item.time}</span>
+                <span>⏱️️ ${item.time}</span>
               </div>
               <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
               <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
@@ -1487,7 +1605,6 @@
 
       const executeSave = () => {
         const gData = groupsConfig[gKey];
-        const pdfUrl = document.getElementById(`teacher-pdf-${gKey}`).value;
         const time = document.getElementById(`teacher-time-${gKey}`).value;
         
         let heroes = [];
@@ -1496,8 +1613,7 @@
           heroes.push(val || "لم يحدد بعد");
         }
 
-        db.ref(`groups/${gKey}`).set({
-          pdfUrl: pdfUrl,
+        db.ref(`groups/${gKey}`).update({
           time: time,
           heroes: heroes,
           leaderboard: teacherState[gKey] || gData.defaultStudents
