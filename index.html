@@ -1207,7 +1207,7 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // فتح النافذة المنبثقة للـ PDF
+    // فتح النافذة المنبثقة للـ PDF مع تفعيل محارف cMaps لدعم تجميع الخط العربي بوضوح
     async function openPdfModal() {
       if (!currentPdfBase64) {
         alert("لم تقم المعلمة بإرفاق ملف المراجعة لهذه المجموعة بعد.");
@@ -1217,7 +1217,12 @@
       document.getElementById('pdf-modal-overlay').classList.remove('hidden');
 
       try {
-        const loadingTask = pdfjsLib.getDocument(currentPdfBase64);
+        const loadingTask = pdfjsLib.getDocument({
+          url: currentPdfBase64,
+          cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+          cMapPacked: true
+        });
+
         pdfDoc = await loadingTask.promise;
         currentPageNum = 1;
         currentPdfScale = 1.3;
@@ -1231,7 +1236,7 @@
       document.getElementById('pdf-modal-overlay').classList.add('hidden');
     }
 
-    // رسم وعرض صفحة واحدة بوضوح داخل النافذة المنبثقة
+    // رسم وعرض صفحة واحدة بدقة عالية لمنع التشوه والتفكك
     async function renderSinglePage(num) {
       if (!pdfDoc) return;
 
@@ -1239,15 +1244,21 @@
       const canvas = document.getElementById('pdf-single-canvas');
       const ctx = canvas.getContext('2d');
 
+      const pixelRatio = window.devicePixelRatio || 1;
       const viewport = page.getViewport({ scale: currentPdfScale });
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
 
-      await page.render({
+      canvas.height = viewport.height * pixelRatio;
+      canvas.width = viewport.width * pixelRatio;
+      canvas.style.width = viewport.width + 'px';
+      canvas.style.height = viewport.height + 'px';
+
+      const renderContext = {
         canvasContext: ctx,
-        viewport: viewport
-      }).promise;
+        viewport: viewport,
+        transform: pixelRatio !== 1 ? [pixelRatio, 0, 0, pixelRatio, 0, 0] : null
+      };
 
+      await page.render(renderContext).promise;
       document.getElementById('page-num-display').innerText = `${num} / ${pdfDoc.numPages}`;
     }
 
@@ -1270,7 +1281,7 @@
       renderSinglePage(currentPageNum);
     }
 
-    // إضافة خاصية التكبير والتصغير بالتاتش الأصبعين (Pinch Zoom) على الموبايل
+    // التكبير والتصغير بالتاتش بالأصابع (Pinch Zoom)
     let initialPinchDist = null;
 
     const viewerArea = document.getElementById('pdf-modal-viewer-area');
@@ -1715,7 +1726,7 @@
             <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
               <div class="bug-report-header">
                 <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span>⏱️️ ${item.time}</span>
+                <span>⏱ ${item.time}</span>
               </div>
               <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
               <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
