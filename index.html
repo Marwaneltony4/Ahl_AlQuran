@@ -132,6 +132,106 @@
       width: 100%;
     }
 
+    /* ==================== PDF Modal Overlay (مثل شاشة الانترو) ==================== */
+    #pdf-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .pdf-modal-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 850px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      border: 2px solid var(--emerald-primary);
+      overflow: hidden;
+      animation: zoomIn 0.3s ease;
+    }
+
+    .pdf-modal-header {
+      padding: 12px 18px;
+      background: var(--emerald-dark);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pdf-modal-title {
+      font-family: 'Amiri', serif;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .pdf-controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pdf-btn-control {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .pdf-btn-control:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .pdf-close-btn {
+      background: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #pdf-modal-viewer-area {
+      flex: 1;
+      overflow: auto;
+      background-color: #323639;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 15px 5px;
+      touch-action: pan-x pan-y pinch-zoom;
+    }
+
+    canvas.pdf-modal-canvas {
+      box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+      border-radius: 6px;
+      max-width: 100%;
+      height: auto !important;
+      transform-origin: center top;
+      transition: transform 0.1s ease-out;
+    }
+
     header {
       text-align: center;
       margin-bottom: 25px;
@@ -440,7 +540,6 @@
       color: var(--text-dark);
     }
 
-    /* قسم المراجعة المطور مع العرض المباشر على التليفون وتحميل الملف */
     .pdf-section-box {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(8px);
@@ -457,32 +556,11 @@
       background: rgba(30, 41, 59, 0.7);
     }
 
-    #pdf-canvas-container {
-      width: 100%;
-      max-height: 550px;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      margin-top: 15px;
-      background-color: #525659;
-      padding: 10px 0;
-    }
-
-    canvas.pdf-page-canvas {
-      width: 95% !important;
-      height: auto !important;
-      margin: 8px auto;
-      display: block;
-      border-radius: 6px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-
     .pdf-action-btns {
       display: flex;
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 10px;
     }
 
     .students-board-section {
@@ -789,6 +867,31 @@
     </div>
   </div>
 
+  <!-- النافذة المنبثقة لعرض الـ PDF بالشاشة الكاملة مع التكبير والتصغير والتحكم بالتاتش -->
+  <div id="pdf-modal-overlay" class="hidden">
+    <div class="pdf-modal-card">
+      <div class="pdf-modal-header">
+        <span class="pdf-modal-title">📖 ملف المراجعة</span>
+        
+        <div class="pdf-controls-bar">
+          <button onclick="changePage(-1)" class="pdf-btn-control">السابق ◀</button>
+          <span id="page-num-display" style="font-size:0.9rem; font-weight:bold;">1 / 1</span>
+          <button onclick="changePage(1)" class="pdf-btn-control">التالي ▶</button>
+          
+          <button onclick="zoomPdf(0.2)" class="pdf-btn-control" title="تكبير">+</button>
+          <button onclick="zoomPdf(-0.2)" class="pdf-btn-control" title="تصغير">-</button>
+          <button onclick="resetZoomPdf()" class="pdf-btn-control" title="إعادة ضبط الحجم">إعادة ضبط 🔍</button>
+        </div>
+
+        <button onclick="closePdfModal()" class="pdf-close-btn">إغلاق ✕</button>
+      </div>
+
+      <div id="pdf-modal-viewer-area">
+        <canvas id="pdf-single-canvas" class="pdf-modal-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <button onclick="toggleDarkMode()" class="theme-toggle-btn">
@@ -862,19 +965,13 @@
         <div id="student-heroes" class="hero-list"></div>
       </div>
 
-      <!-- قسم المراجعة المطور مع العرض المباشر على التليفون وتحميل الملف -->
+      <!-- قسم المراجعة المطور مع فتح نافذة الـ PDF وسهولة الزوم -->
       <div class="pdf-section-box">
         <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; font-size: 1.55rem; margin-bottom: 12px;">📖 المراجعة</h3>
         
         <div class="pdf-action-btns">
-          <button id="toggle-pdf-btn" onclick="togglePdfViewer()" class="btn" style="width: auto; padding: 10px 20px; font-size: 0.95rem;">عرض ملف المراجعة (PDF) 📄</button>
-          <a id="download-pdf-btn" href="#" download="المراجعة.pdf" class="btn" style="width: auto; padding: 10px 20px; font-size: 0.95rem; background-color: var(--gold-accent); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">تحميل الملف 📥</a>
-        </div>
-
-        <div id="pdf-container-wrapper" class="hidden">
-          <div id="pdf-canvas-container">
-            <p id="pdf-loading-text" style="color: white; padding: 20px; font-weight: bold;">جاري تحميل وعرض الصفحات...</p>
-          </div>
+          <button onclick="openPdfModal()" class="btn" style="width: auto; padding: 10px 22px; font-size: 1rem;">عرض ملف المراجعة (PDF) 📄</button>
+          <a id="download-pdf-btn" href="#" download="المراجعة.pdf" class="btn" style="width: auto; padding: 10px 22px; font-size: 1rem; background-color: var(--gold-accent); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">تحميل الملف 📥</a>
         </div>
       </div>
 
@@ -1004,7 +1101,7 @@
       <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
-          <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️️</button>
+          <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️</button>
         </div>
         <div id="developer-bug-reports-list">
           <p style="text-align: center; color: var(--text-muted);">جاري تحميل التبليغات...</p>
@@ -1072,7 +1169,12 @@
     let saveDebounceTimers = {};
     let globalAnnouncementTimer = null;
     let selectedGroupKey = null;
+
+    // متغيرات الـ PDF
     let currentPdfBase64 = null;
+    let pdfDoc = null;
+    let currentPageNum = 1;
+    let currentPdfScale = 1.3;
 
     let mediaRecorder = null;
     let audioStream = null;
@@ -1105,56 +1207,98 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // بناء وعرض كافة صفحات الـ PDF بوضوح على الموبايل بواسطة PDF.js
-    async function renderPdfOnCanvas(base64Data) {
-      const container = document.getElementById('pdf-canvas-container');
-      container.innerHTML = '<p style="color: white; padding: 20px; font-weight: bold;">جاري معالجة وتجهيز الصفحات للرؤية...</p>';
+    // فتح النافذة المنبثقة للـ PDF
+    async function openPdfModal() {
+      if (!currentPdfBase64) {
+        alert("لم تقم المعلمة بإرفاق ملف المراجعة لهذه المجموعة بعد.");
+        return;
+      }
+
+      document.getElementById('pdf-modal-overlay').classList.remove('hidden');
 
       try {
-        const loadingTask = pdfjsLib.getDocument(base64Data);
-        const pdf = await loadingTask.promise;
-
-        container.innerHTML = ''; // تفريغ نص التحميل
-
-        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-          const page = await pdf.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 1.5 });
-
-          const canvas = document.createElement('canvas');
-          canvas.className = 'pdf-page-canvas';
-          const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          container.appendChild(canvas);
-
-          await page.render({
-            canvasContext: context,
-            viewport: viewport
-          }).promise;
-        }
+        const loadingTask = pdfjsLib.getDocument(currentPdfBase64);
+        pdfDoc = await loadingTask.promise;
+        currentPageNum = 1;
+        currentPdfScale = 1.3;
+        renderSinglePage(currentPageNum);
       } catch (error) {
-        container.innerHTML = '<p style="color: #fca5a5; padding: 20px; font-weight: bold;">تعذر عرض الملف، يمكنك ضغط زر التحميل لمراجعته مباشرة.</p>';
+        alert("تعذر فتح ملف الـ PDF، يرجى إعادة المحاولة أو التحميل.");
       }
     }
 
-    function togglePdfViewer() {
-      const wrapper = document.getElementById('pdf-container-wrapper');
-      const btn = document.getElementById('toggle-pdf-btn');
+    function closePdfModal() {
+      document.getElementById('pdf-modal-overlay').classList.add('hidden');
+    }
 
-      if (wrapper.classList.contains('hidden')) {
-        if (!currentPdfBase64) {
-          alert("لم تقم المعلمة بإرفاق ملف المراجعة لهذه المجموعة بعد.");
-          return;
+    // رسم وعرض صفحة واحدة بوضوح داخل النافذة المنبثقة
+    async function renderSinglePage(num) {
+      if (!pdfDoc) return;
+
+      const page = await pdfDoc.getPage(num);
+      const canvas = document.getElementById('pdf-single-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const viewport = page.getViewport({ scale: currentPdfScale });
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      await page.render({
+        canvasContext: ctx,
+        viewport: viewport
+      }).promise;
+
+      document.getElementById('page-num-display').innerText = `${num} / ${pdfDoc.numPages}`;
+    }
+
+    function changePage(delta) {
+      if (!pdfDoc) return;
+      const newPage = currentPageNum + delta;
+      if (newPage >= 1 && newPage <= pdfDoc.numPages) {
+        currentPageNum = newPage;
+        renderSinglePage(currentPageNum);
+      }
+    }
+
+    function zoomPdf(delta) {
+      currentPdfScale = Math.max(0.6, Math.min(3.5, currentPdfScale + delta));
+      renderSinglePage(currentPageNum);
+    }
+
+    function resetZoomPdf() {
+      currentPdfScale = 1.3;
+      renderSinglePage(currentPageNum);
+    }
+
+    // إضافة خاصية التكبير والتصغير بالتاتش الأصبعين (Pinch Zoom) على الموبايل
+    let initialPinchDist = null;
+
+    const viewerArea = document.getElementById('pdf-modal-viewer-area');
+    viewerArea.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        initialPinchDist = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+      }
+    });
+
+    viewerArea.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && initialPinchDist) {
+        const currentDist = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+        const diff = currentDist - initialPinchDist;
+
+        if (Math.abs(diff) > 25) {
+          zoomPdf(diff > 0 ? 0.15 : -0.15);
+          initialPinchDist = currentDist;
         }
-        wrapper.classList.remove('hidden');
-        btn.innerText = 'إخفاء ملف المراجعة ✕';
-        renderPdfOnCanvas(currentPdfBase64);
-      } else {
-        wrapper.classList.add('hidden');
-        btn.innerText = 'عرض ملف المراجعة (PDF) 📄';
       }
-    }
+    });
+
+    viewerArea.addEventListener('touchend', () => { initialPinchDist = null; });
 
     function selectGroup(gKey) {
       selectedGroupKey = gKey;
@@ -1208,8 +1352,7 @@
 
     function backToGroupSelection() {
       resetAudioRecorder();
-      document.getElementById('pdf-container-wrapper').classList.add('hidden');
-      document.getElementById('toggle-pdf-btn').innerText = 'عرض ملف المراجعة (PDF) 📄';
+      closePdfModal();
       document.getElementById('group-screen').classList.add('hidden');
       document.getElementById('selection-screen').classList.remove('hidden');
     }
@@ -1572,7 +1715,7 @@
             <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
               <div class="bug-report-header">
                 <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span>⏱️ ${item.time}</span>
+                <span>⏱️️ ${item.time}</span>
               </div>
               <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
               <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
