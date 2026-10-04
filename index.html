@@ -459,7 +459,58 @@
       padding-bottom: 12px;
       border-bottom: 2px solid var(--border-color);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 14px;
+    }
+
+    .dashboard-header > div {
+      flex: 1 1 220px;
+      min-width: 0;
+    }
+
+    .dashboard-header .logout-btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      margin-right: auto;
+    }
+
+    .audio-recorder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .audio-recorder-header .audio-recorder-title {
+      flex: 1 1 220px;
+      min-width: 0;
+    }
+
+    .audio-recorder-header .recorder-reset-top-btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      position: static;
+    }
+
+    @media (max-width: 600px) {
+      .dashboard-header {
+        align-items: stretch;
+      }
+
+      .dashboard-header .logout-btn {
+        width: 100%;
+        margin-right: 0;
+        text-align: center;
+      }
+
+      .audio-recorder-header {
+        align-items: stretch;
+      }
+
+      .audio-recorder-header .recorder-reset-top-btn {
+        width: 100%;
+        text-align: center;
+      }
     }
 
     .logout-btn {
@@ -867,30 +918,7 @@
     </div>
   </div>
 
-  <!-- النافذة المنبثقة لعرض الـ PDF بالشاشة الكاملة مع التكبير والتصغير والتحكم بالتاتش -->
-  <div id="pdf-modal-overlay" class="hidden">
-    <div class="pdf-modal-card">
-      <div class="pdf-modal-header">
-        <span class="pdf-modal-title">📖 ملف المراجعة</span>
-        
-        <div class="pdf-controls-bar">
-          <button onclick="changePage(-1)" class="pdf-btn-control">السابق ◀</button>
-          <span id="page-num-display" style="font-size:0.9rem; font-weight:bold;">1 / 1</span>
-          <button onclick="changePage(1)" class="pdf-btn-control">التالي ▶</button>
-          
-          <button onclick="zoomPdf(0.2)" class="pdf-btn-control" title="تكبير">+</button>
-          <button onclick="zoomPdf(-0.2)" class="pdf-btn-control" title="تصغير">-</button>
-          <button onclick="resetZoomPdf()" class="pdf-btn-control" title="إعادة ضبط الحجم">إعادة ضبط 🔍</button>
-        </div>
-
-        <button onclick="closePdfModal()" class="pdf-close-btn">إغلاق ✕</button>
-      </div>
-
-      <div id="pdf-modal-viewer-area">
-        <canvas id="pdf-single-canvas" class="pdf-modal-canvas"></canvas>
-      </div>
-    </div>
-  </div>
+  <!-- فتح الـ PDF داخل الموقع متوقف مؤقتًا؛ التحميل فقط متاح للطلاب -->
 
   <div class="container">
     <header>
@@ -943,7 +971,7 @@
           <h2 id="group-display-name" class="group-title">المجموعة...</h2>
           <p style="color: var(--emerald-primary); font-weight: bold; font-size: 0.95rem;">صفحة المتابعة المباشرة</p>
         </div>
-        <button onclick="backToGroupSelection()" class="logout-btn">تغيير المجموعة 🔄</button>
+        <button type="button" id="change-group-btn" class="logout-btn group-change-btn">تغيير المجموعة 🔄</button>
       </div>
 
       <!-- شريط الإعلانات العامة -->
@@ -964,19 +992,17 @@
         <h3 id="student-hero-title">بطل الشهر 🏆</h3>
         <div id="student-heroes" class="hero-list"></div>
       </div>
-
-      <!-- قسم المراجعة المطور مع فتح نافذة الـ PDF وسهولة الزوم -->
+      <!-- قسم المراجعة: التحميل فقط -->
       <div class="pdf-section-box">
         <h3 style="color: var(--emerald-dark); font-family: 'Amiri', serif; font-size: 1.55rem; margin-bottom: 12px;">📖 المراجعة</h3>
-        
+        <p style="margin: 0 0 14px; color: var(--text-muted); line-height: 1.8;">يعمل المطور على صيانة فتح الجدول، يمكنك تحميله أو فتحه من جروب الواتس.</p>
         <div class="pdf-action-btns">
-          <button onclick="openPdfModal()" class="btn" style="width: auto; padding: 10px 22px; font-size: 1rem;">عرض ملف المراجعة (PDF) 📄</button>
           <a id="download-pdf-btn" href="#" download="المراجعة.pdf" class="btn" style="width: auto; padding: 10px 22px; font-size: 1rem; background-color: var(--gold-accent); text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">تحميل الملف 📥</a>
         </div>
       </div>
 
       <!-- قسم تسجيل وإرسال التسجيل الصوتي للمعلمة -->
-      <div class="audio-recorder-box">
+      <div class="audio-recorder-box" style="margin-top: 10px;">
         <div class="audio-recorder-header">
           <h3 class="audio-recorder-title">🎙️ تسجيل التسميع الصوتي للمعلمة</h3>
           <button onclick="resetAudioRecorder()" class="recorder-reset-top-btn" title="إلغاء الخانة والبدء من جديد">✕ قفل وإعادة ضبط</button>
@@ -1097,6 +1123,41 @@
         </div>
       </div>
 
+
+      <!-- سجل نشاطات الموقع -->
+      <div class="card" style="border: 2px solid var(--emerald-primary); background: var(--input-bg); margin-bottom: 25px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div>
+            <h3 style="color:var(--emerald-dark); font-family:'Amiri', serif; margin-bottom:4px;">📜 سجل نشاطات الموقع</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">آخر العمليات التي تمت على المنصة.</p>
+          </div>
+          <button onclick="clearActivityLog()" class="btn-danger" style="padding:5px 10px; font-size:0.8rem;">مسح السجل 🗑️</button>
+        </div>
+        <div id="developer-activity-log">
+          <p style="text-align:center; color:var(--text-muted);">جاري تحميل سجل النشاطات...</p>
+        </div>
+      </div>
+
+      <!-- إدارة الطلاب من لوحة المطور -->
+      <div class="card" style="border: 2px solid var(--gold-accent); background: var(--input-bg); margin-bottom: 25px;">
+        <h3 style="color:var(--gold-hover); font-family:'Amiri', serif; margin-bottom:8px;">👥 إدارة الطلاب</h3>
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:14px;">
+          إضافة أو تعديل أو حذف الطلاب مباشرة من لوحة المطور.
+        </p>
+
+        <div class="form-group">
+          <label>اختر المجموعة:</label>
+          <select id="developer-student-group" onchange="loadDeveloperStudents()"></select>
+        </div>
+
+        <div id="developer-student-list" class="students-grid-list" style="margin-bottom:14px;"></div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="developer-new-student" placeholder="اسم الطالب الجديد..." style="flex:1; min-width:180px;">
+          <button onclick="developerAddStudent()" class="btn">إضافة طالب ➕</button>
+        </div>
+      </div>
+
       <!-- قسم التبليغات والأخطاء البرمجية الواردة -->
       <div class="card" style="border: 2px solid var(--danger-color); background: rgba(220, 38, 38, 0.03); margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -1207,109 +1268,7 @@
       setTimeout(() => { toast.classList.remove('show'); }, 2500);
     }
 
-    // فتح النافذة المنبثقة للـ PDF مع تفعيل محارف cMaps لدعم تجميع الخط العربي بوضوح
-    async function openPdfModal() {
-      if (!currentPdfBase64) {
-        alert("لم تقم المعلمة بإرفاق ملف المراجعة لهذه المجموعة بعد.");
-        return;
-      }
-
-      document.getElementById('pdf-modal-overlay').classList.remove('hidden');
-
-      try {
-        const loadingTask = pdfjsLib.getDocument({
-          url: currentPdfBase64,
-          cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-          cMapPacked: true
-        });
-
-        pdfDoc = await loadingTask.promise;
-        currentPageNum = 1;
-        currentPdfScale = 1.3;
-        renderSinglePage(currentPageNum);
-      } catch (error) {
-        alert("تعذر فتح ملف الـ PDF، يرجى إعادة المحاولة أو التحميل.");
-      }
-    }
-
-    function closePdfModal() {
-      document.getElementById('pdf-modal-overlay').classList.add('hidden');
-    }
-
-    // رسم وعرض صفحة واحدة بدقة عالية لمنع التشوه والتفكك
-    async function renderSinglePage(num) {
-      if (!pdfDoc) return;
-
-      const page = await pdfDoc.getPage(num);
-      const canvas = document.getElementById('pdf-single-canvas');
-      const ctx = canvas.getContext('2d');
-
-      const pixelRatio = window.devicePixelRatio || 1;
-      const viewport = page.getViewport({ scale: currentPdfScale });
-
-      canvas.height = viewport.height * pixelRatio;
-      canvas.width = viewport.width * pixelRatio;
-      canvas.style.width = viewport.width + 'px';
-      canvas.style.height = viewport.height + 'px';
-
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport,
-        transform: pixelRatio !== 1 ? [pixelRatio, 0, 0, pixelRatio, 0, 0] : null
-      };
-
-      await page.render(renderContext).promise;
-      document.getElementById('page-num-display').innerText = `${num} / ${pdfDoc.numPages}`;
-    }
-
-    function changePage(delta) {
-      if (!pdfDoc) return;
-      const newPage = currentPageNum + delta;
-      if (newPage >= 1 && newPage <= pdfDoc.numPages) {
-        currentPageNum = newPage;
-        renderSinglePage(currentPageNum);
-      }
-    }
-
-    function zoomPdf(delta) {
-      currentPdfScale = Math.max(0.6, Math.min(3.5, currentPdfScale + delta));
-      renderSinglePage(currentPageNum);
-    }
-
-    function resetZoomPdf() {
-      currentPdfScale = 1.3;
-      renderSinglePage(currentPageNum);
-    }
-
-    // التكبير والتصغير بالتاتش بالأصابع (Pinch Zoom)
-    let initialPinchDist = null;
-
-    const viewerArea = document.getElementById('pdf-modal-viewer-area');
-    viewerArea.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 2) {
-        initialPinchDist = Math.hypot(
-          e.touches[0].pageX - e.touches[1].pageX,
-          e.touches[0].pageY - e.touches[1].pageY
-        );
-      }
-    });
-
-    viewerArea.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 2 && initialPinchDist) {
-        const currentDist = Math.hypot(
-          e.touches[0].pageX - e.touches[1].pageX,
-          e.touches[0].pageY - e.touches[1].pageY
-        );
-        const diff = currentDist - initialPinchDist;
-
-        if (Math.abs(diff) > 25) {
-          zoomPdf(diff > 0 ? 0.15 : -0.15);
-          initialPinchDist = currentDist;
-        }
-      }
-    });
-
-    viewerArea.addEventListener('touchend', () => { initialPinchDist = null; });
+    // تم إلغاء نظام فتح الـ PDF داخل الموقع، ويظل رابط التحميل فقط متاحًا.
 
     function selectGroup(gKey) {
       selectedGroupKey = gKey;
@@ -1359,13 +1318,6 @@
 
         startTimer(time, 'student-timer');
       });
-    }
-
-    function backToGroupSelection() {
-      resetAudioRecorder();
-      closePdfModal();
-      document.getElementById('group-screen').classList.add('hidden');
-      document.getElementById('selection-screen').classList.remove('hidden');
     }
 
     function showPublicAudioPage() {
@@ -1475,7 +1427,7 @@
       }
     }
 
-    function resetAudioRecorder() {
+    function resetAudioRecorder(showMessage = true) {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
@@ -1493,7 +1445,10 @@
       document.getElementById('audio-preview-container').classList.add('hidden');
       document.getElementById('record-btn').style.display = 'inline-flex';
       document.getElementById('stop-btn').style.display = 'none';
-      showToast("🔄 تم إيقاف المايك وإعادة ضبط التسجيل");
+
+      if (showMessage) {
+        showToast("🔄 تم إيقاف المايك وإعادة ضبط التسجيل");
+      }
     }
 
     function sendAudioRecord() {
@@ -1532,6 +1487,7 @@
       reader.onload = function(e) {
         const base64Pdf = e.target.result;
         db.ref(`groups/${gKey}/pdfData`).set(base64Pdf).then(() => {
+          logActivity(`📖 تم تحديث ملف المراجعة لـ ${groupsConfig[gKey].name}`);
           showToast("✨ تم رفع ملف الـ PDF المباشر بنجاح!");
         });
       };
@@ -1648,7 +1604,8 @@
     }
 
     function deleteAudioRecord(key) {
-      db.ref('audio_records/' + key).remove().then(() => { showToast("تم حذف التسجيل الصوتي"); });
+      db.ref('audio_records/' + key).remove().then(() => { logActivity("🗑️ تم حذف تسجيل صوتي");
+        showToast("تم حذف التسجيل الصوتي"); });
     }
 
     function renderTeacherLeaderboard(gKey) {
@@ -1698,8 +1655,10 @@
       db.ref('bug_reports').push({
         sender: "مستخدم المنصة",
         message: bugText,
-        time: new Date().toLocaleString('ar-EG')
+        time: new Date().toLocaleString('ar-EG'),
+        status: "new"
       }).then(() => {
+        logActivity("🐛 تم إرسال بلاغ برمجي جديد");
         showToast("🚀 تم إرسال التبليغ للمطور بنجاح!");
         if (textEl) textEl.value = '';
       });
@@ -1735,6 +1694,9 @@
         });
       });
 
+      initDeveloperStudentManager();
+      initDeveloperActivityLog();
+
       db.ref('bug_reports').on('value', (snapshot) => {
         const reports = snapshot.val() || {};
         const container = document.getElementById('developer-bug-reports-list');
@@ -1748,22 +1710,203 @@
 
         keys.forEach(key => {
           const item = reports[key];
+          const status = item.status || 'new';
+          const statusText = status === 'resolved' ? '🟢 تم الحل' : (status === 'working' ? '🟡 قيد الحل' : '🔴 جديد');
           container.innerHTML += `
             <div class="bug-report-card">
               <div class="bug-report-header">
                 <span>⏱️ ${item.time}</span>
+                <span style="font-weight:bold;">${statusText}</span>
               </div>
-              <div class="bug-report-text">${item.message}</div>
-              <button onclick="deleteSingleBugReport('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف البلاغ ✕</button>
+              <div class="bug-report-text">${escapeHtml(item.message || '')}</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                <select onchange="updateBugStatus('${key}', this.value)" style="padding:7px; border-radius:8px; border:1px solid var(--border-color); background:var(--input-bg); color:var(--text-main);">
+                  <option value="new" ${status === 'new' ? 'selected' : ''}>🔴 جديد</option>
+                  <option value="working" ${status === 'working' ? 'selected' : ''}>🟡 قيد الحل</option>
+                  <option value="resolved" ${status === 'resolved' ? 'selected' : ''}>🟢 تم الحل</option>
+                </select>
+                <button onclick="deleteSingleBugReport('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold;">حذف البلاغ ✕</button>
+              </div>
             </div>
           `;
         });
       });
     }
 
+
+    // ===== أدوات المطور الجديدة =====
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function logActivity(message) {
+      db.ref('activity_log').push({
+        message: message,
+        time: new Date().toLocaleString('ar-EG')
+      }).catch(() => {});
+    }
+
+    function initDeveloperActivityLog() {
+      db.ref('activity_log').limitToLast(40).on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const container = document.getElementById('developer-activity-log');
+        if (!container) return;
+
+        const keys = Object.keys(data).reverse();
+        if (!keys.length) {
+          container.innerHTML = '<p style="text-align:center;color:var(--text-muted);">لا توجد نشاطات مسجلة حتى الآن.</p>';
+          return;
+        }
+
+        container.innerHTML = keys.map(key => {
+          const item = data[key];
+          return `
+            <div style="padding:10px 12px; margin-bottom:7px; border-radius:10px; background:var(--card-bg); border:1px solid var(--border-color);">
+              <div style="font-weight:bold;">${escapeHtml(item.message || '')}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">⏱️ ${escapeHtml(item.time || '')}</div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    function clearActivityLog() {
+      if (confirm("هل أنت متأكد من مسح سجل النشاطات؟")) {
+        db.ref('activity_log').remove().then(() => {
+          showToast("🧹 تم مسح سجل النشاطات");
+        });
+      }
+    }
+
+    function initDeveloperStudentManager() {
+      const select = document.getElementById('developer-student-group');
+      if (!select) return;
+
+      select.innerHTML = Object.keys(groupsConfig).map(key =>
+        `<option value="${key}">${escapeHtml(groupsConfig[key].name)}</option>`
+      ).join('');
+
+      loadDeveloperStudents();
+    }
+
+    function loadDeveloperStudents() {
+      const select = document.getElementById('developer-student-group');
+      const container = document.getElementById('developer-student-list');
+      if (!select || !container) return;
+
+      const gKey = select.value;
+      const gData = groupsConfig[gKey];
+
+      db.ref(`groups/${gKey}`).once('value').then(snapshot => {
+        const val = snapshot.val() || {};
+        const students = val.leaderboard || [...gData.defaultStudents];
+
+        container.innerHTML = students.length ? students.map((student, index) => `
+          <div class="student-card-item" style="margin-bottom:7px;">
+            <input id="dev-student-${gKey}-${index}" value="${escapeHtml(student)}"
+              style="flex:1; min-width:120px;"
+              onchange="developerEditStudent(${index}, this.value)">
+            <button class="btn-danger" style="padding:5px 9px; font-size:0.8rem;"
+              onclick="developerDeleteStudent(${index})">حذف 🗑️</button>
+          </div>
+        `).join('') : '<p style="color:var(--text-muted);">لا يوجد طلاب في هذه المجموعة.</p>';
+      });
+    }
+
+    function getDeveloperSelectedGroup() {
+      const select = document.getElementById('developer-student-group');
+      return select ? select.value : null;
+    }
+
+    function getCurrentDeveloperStudents(gKey) {
+      const gData = groupsConfig[gKey];
+      return db.ref(`groups/${gKey}`).once('value').then(snapshot => {
+        const val = snapshot.val() || {};
+        return val.leaderboard || [...gData.defaultStudents];
+      });
+    }
+
+    function developerAddStudent() {
+      const gKey = getDeveloperSelectedGroup();
+      const input = document.getElementById('developer-new-student');
+      const name = input ? input.value.trim() : '';
+      if (!gKey || !name) {
+        alert("اكتب اسم الطالب أولاً.");
+        return;
+      }
+
+      getCurrentDeveloperStudents(gKey).then(students => {
+        students.push(name);
+        return db.ref(`groups/${gKey}/leaderboard`).set(students);
+      }).then(() => {
+        input.value = '';
+        logActivity(`👤 تمت إضافة الطالب "${name}" إلى ${groupsConfig[gKey].name}`);
+        loadDeveloperStudents();
+        showToast("✅ تمت إضافة الطالب");
+      });
+    }
+
+    function developerEditStudent(index, newValue) {
+      const gKey = getDeveloperSelectedGroup();
+      const name = newValue.trim();
+      if (!gKey || !name) {
+        alert("اسم الطالب لا يمكن أن يكون فارغاً.");
+        loadDeveloperStudents();
+        return;
+      }
+
+      getCurrentDeveloperStudents(gKey).then(students => {
+        if (index >= students.length) return;
+        const oldName = students[index];
+        students[index] = name;
+        return db.ref(`groups/${gKey}/leaderboard`).set(students).then(() => {
+          logActivity(`✏️ تم تعديل اسم الطالب "${oldName}" إلى "${name}"`);
+          showToast("✏️ تم تعديل اسم الطالب");
+          loadDeveloperStudents();
+        });
+      });
+    }
+
+    function developerDeleteStudent(index) {
+      const gKey = getDeveloperSelectedGroup();
+      if (!gKey) return;
+
+      getCurrentDeveloperStudents(gKey).then(students => {
+        const name = students[index];
+        if (!name) return;
+        if (!confirm(`هل أنت متأكد من حذف الطالب "${name}" من ${groupsConfig[gKey].name}؟`)) return;
+
+        students.splice(index, 1);
+        return db.ref(`groups/${gKey}/leaderboard`).set(students).then(() => {
+          logActivity(`🗑️ تم حذف الطالب "${name}" من ${groupsConfig[gKey].name}`);
+          showToast("🗑️ تم حذف الطالب");
+          loadDeveloperStudents();
+        });
+      });
+    }
+
+    function updateBugStatus(key, status) {
+      const labels = {
+        new: "🔴 جديد",
+        working: "🟡 قيد الحل",
+        resolved: "🟢 تم الحل"
+      };
+      db.ref(`bug_reports/${key}/status`).set(status).then(() => {
+        logActivity(`🐛 تم تغيير حالة بلاغ إلى ${labels[status] || status}`);
+        showToast("✅ تم تحديث حالة البلاغ");
+      });
+    }
+
     function clearAllAudioRecords() {
       if (confirm("هل أنت متأكد من مسح جميع التسجيلات الصوتية وتفريغ مساحتها من قاعدة البيانات؟")) {
         db.ref('audio_records').remove().then(() => {
+          logActivity("🗑️ تم مسح كافة التسجيلات الصوتية");
           showToast("🗑️ تم تفريغ ومسح كافة التسجيلات الصوتية بنجاح");
         });
       }
@@ -1780,6 +1923,7 @@
         a.download = `ahl_alquran_backup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
+        logActivity("💾 تم تنزيل نسخة احتياطية من قاعدة البيانات");
         showToast("📥 تم تحميل النسخة الاحتياطية بنجاح");
       });
     }
@@ -1794,6 +1938,7 @@
           const importedData = JSON.parse(e.target.result);
           if (confirm("هل أنت متأكد من استعادة هذه النسخة وإعادة كتابة البيانات؟")) {
             db.ref().set(importedData).then(() => {
+              logActivity("♻️ تم استعادة نسخة احتياطية");
               showToast("📤 تم استعادة البيانات بنجاح!");
             });
           }
@@ -1805,12 +1950,14 @@
     }
 
     function deleteSingleBugReport(key) {
-      db.ref('bug_reports/' + key).remove().then(() => { showToast("تم حذف التبليغ"); });
+      db.ref('bug_reports/' + key).remove().then(() => { logActivity("🐛 تم حذف بلاغ برمجي");
+      showToast("تم حذف التبليغ"); });
     }
 
     function clearAllBugReports() {
       if (confirm("هل أنت متأكد من مسح جميع التبليغات؟")) {
-        db.ref('bug_reports').remove().then(() => { showToast("تم مسح كافة التبليغات"); });
+        db.ref('bug_reports').remove().then(() => { logActivity("🧹 تم مسح كافة التبليغات");
+        showToast("تم مسح كافة التبليغات"); });
       }
     }
 
@@ -1839,7 +1986,8 @@
           time: time,
           heroes: heroes,
           leaderboard: teacherState[gKey] || gData.defaultStudents
-        }).then(() => { showToast("✨ تم حفظ التعديلات تلقائياً"); });
+        }).then(() => { logActivity(`⚙️ تم حفظ تعديلات ${gData.name}`);
+          showToast("✨ تم حفظ التعديلات تلقائياً"); });
       };
 
       if (immediate) executeSave();
@@ -1888,5 +2036,38 @@
       activeIntervals[elementId] = setInterval(update, 1000);
     }
   </script>
+
+<script>
+/* ===== زر تغيير المجموعة - إعادة برمجة مستقلة ===== */
+(function () {
+  function openGroupSelectionOnly() {
+    var groupScreen = document.getElementById('group-screen');
+    var selectionScreen = document.getElementById('selection-screen');
+
+    if (!groupScreen || !selectionScreen) {
+      console.error('لم يتم العثور على شاشة المجموعة أو شاشة اختيار المجموعة.');
+      return;
+    }
+
+    // وظيفة الزر الوحيدة: الانتقال من صفحة المجموعة إلى صفحة اختيار المجموعة.
+    groupScreen.classList.add('hidden');
+    selectionScreen.classList.remove('hidden');
+
+    // إغلاق أي نافذة PDF مفتوحة فقط، بدون لمس التسجيل أو المايك.
+    var pdfModal = document.getElementById('pdf-modal');
+    if (pdfModal) {
+      pdfModal.classList.add('hidden');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var button = document.getElementById('change-group-btn');
+    if (button) {
+      button.addEventListener('click', openGroupSelectionOnly);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
