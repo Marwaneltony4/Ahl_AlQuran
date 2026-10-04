@@ -1164,6 +1164,9 @@
           <h3 style="color: var(--danger-color); font-family: 'Amiri', serif;">🚨 التبليغات والأخطاء البرمجية الواردة</h3>
           <button onclick="clearAllBugReports()" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">مسح كافة التبليغات 🗑️</button>
         </div>
+        <div style="margin-bottom:12px;padding:10px 12px;border-radius:10px;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.25);color:var(--text-main);font-size:.9rem;">
+        🔐 <strong>تنبيه أمان:</strong> حماية لوحة المعلمة والمطور بشكل حقيقي تعتمد على Firebase Authentication وSecurity Rules، وليس على كلمة مرور موجودة داخل ملف HTML.
+      </div>
         <div id="developer-bug-reports-list">
           <p style="text-align: center; color: var(--text-muted);">جاري تحميل التبليغات...</p>
         </div>
@@ -1190,6 +1193,35 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    // ===== حماية وتحسينات المنصة =====
+    // حدود محلية لتقليل خطر تضخم Realtime Database.
+    const MAX_AUDIO_BYTES = 3 * 1024 * 1024; // 3 MB
+    const MAX_PDF_BYTES = 5 * 1024 * 1024;   // 5 MB
+    const MAX_STUDENT_NAME_LENGTH = 80;
+    const MAX_BUG_REPORT_LENGTH = 1000;
+
+    function safeText(value, maxLength = 500) {
+      return String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, maxLength);
+    }
+
+    function safeDataUrl(value, allowedPrefix) {
+      const v = String(value || '');
+      return v.startsWith(allowedPrefix) ? v : '';
+    }
+
+    function validGroupKey(gKey) {
+      return Object.prototype.hasOwnProperty.call(groupsConfig, gKey);
+    }
+
+    function validateBackupShape(data) {
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+      const allowedRoots = [
+        'global_announcement', 'audio_records', 'bug_reports',
+        'activity_log', 'groups'
+      ];
+      return Object.keys(data).every(k => allowedRoots.includes(k));
+    }
+
 
     // إعداد مكتبة PDF.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1304,16 +1336,22 @@
 
         const heroesBox = document.getElementById('student-heroes');
         heroesBox.innerHTML = '';
-        heroes.forEach(h => { heroesBox.innerHTML += `<div class="hero-item">${h}</div>`; });
+        heroes.forEach(h => {
+          const item = document.createElement('div');
+          item.className = 'hero-item';
+          item.textContent = safeText(h, 120);
+          heroesBox.appendChild(item);
+        });
 
         const boardBox = document.getElementById('student-board-list');
         boardBox.innerHTML = '';
         studentsList.forEach((student) => {
-          boardBox.innerHTML += `
-            <li class="student-card-item">
-              <span>🌸 ${student}</span>
-            </li>
-          `;
+          const li = document.createElement('li');
+          li.className = 'student-card-item';
+          const span = document.createElement('span');
+          span.textContent = '🌸 ' + safeText(student, MAX_STUDENT_NAME_LENGTH);
+          li.appendChild(span);
+          boardBox.appendChild(li);
         });
 
         startTimer(time, 'student-timer');
@@ -1336,16 +1374,33 @@
         }
 
         keys.forEach(key => {
-          const item = records[key];
-          container.innerHTML += `
-            <div class="audio-report-card">
-              <div class="bug-report-header" style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span style="font-size:0.85rem; color:var(--text-muted);">⏱️ ${item.time}</span>
-              </div>
-              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
-            </div>
-          `;
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+          header.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:6px;';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.style.cssText = 'font-size:0.85rem; color:var(--text-muted);';
+          time.textContent = `⏱️ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          card.append(header, audio);
+          container.appendChild(card);
         });
       });
     }
@@ -1355,6 +1410,8 @@
       document.getElementById('selection-screen').classList.remove('hidden');
     }
 
+    // تنبيه: هذه الحماية الحالية ليست حماية حقيقية لأنها تعمل داخل المتصفح.
+    // يجب تفعيل Firebase Authentication + Realtime Database Rules قبل الاستخدام الحقيقي.
     function showTeacherLoginPrompt() {
       const pass = prompt("أدخلي كلمة المرور:");
       if (pass === 'dev') {
@@ -1381,7 +1438,7 @@
     }
 
     async function toggleRecording() {
-      const sName = document.getElementById('audio-student-name').value.trim();
+      const sName = safeText(document.getElementById('audio-student-name').value, MAX_STUDENT_NAME_LENGTH);
       if (!sName) {
         alert("يرجى كتابة اسمك الثلاثي أولاً قبل بدء التسجيل!");
         return;
@@ -1392,7 +1449,14 @@
         mediaRecorder = new MediaRecorder(audioStream);
         audioChunks = [];
 
-        mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size) audioChunks.push(event.data);
+          const currentSize = audioChunks.reduce((sum, chunk) => sum + (chunk.size || 0), 0);
+          if (currentSize > MAX_AUDIO_BYTES && mediaRecorder && mediaRecorder.state !== 'inactive') {
+            showToast("⚠️ التسجيل وصل للحد الأقصى وسيتم إيقافه");
+            mediaRecorder.stop();
+          }
+        };
 
         mediaRecorder.onstop = () => {
           stopAudioTracks();
@@ -1452,18 +1516,26 @@
     }
 
     function sendAudioRecord() {
-      const sName = document.getElementById('audio-student-name').value.trim();
-      if (!sName || !audioBase64Data) {
+      const sName = safeText(document.getElementById('audio-student-name').value, MAX_STUDENT_NAME_LENGTH);
+      const audioData = safeDataUrl(audioBase64Data, 'data:audio/');
+      if (!sName || !audioData) {
         alert("يرجى التأكد من كتابة اسمك وتسجيل المقطع الصوتي أولاً!");
         return;
       }
 
-      const gName = selectedGroupKey && groupsConfig[selectedGroupKey] ? groupsConfig[selectedGroupKey].name : "المجموعة العامة";
+      if (audioData.length > MAX_AUDIO_BYTES * 1.5) {
+        alert("التسجيل كبير جدًا. سجّل مقطعًا أقصر ثم حاول مرة أخرى.");
+        return;
+      }
+
+      const gName = selectedGroupKey && groupsConfig[selectedGroupKey]
+        ? groupsConfig[selectedGroupKey].name
+        : "المجموعة العامة";
 
       db.ref('audio_records').push({
         studentName: sName,
         groupName: gName,
-        audioData: audioBase64Data,
+        audioData: audioData,
         time: new Date().toLocaleString('ar-EG')
       }).then(() => {
         showToast("🚀 تم إرسال التسجيل الصوتي للمعلمة بنجاح!");
@@ -1477,20 +1549,43 @@
       const file = event.target.files[0];
       if (!file) return;
 
+      if (!validGroupKey(gKey)) {
+        alert("المجموعة غير صالحة.");
+        event.target.value = '';
+        return;
+      }
+
       if (file.type !== "application/pdf") {
         alert("يرجى إرفاق ملف بتنسيق PDF فقط!");
+        event.target.value = '';
+        return;
+      }
+
+      if (file.size > MAX_PDF_BYTES) {
+        alert("حجم ملف الـPDF كبير جدًا. الحد الأقصى 5 ميجابايت.");
+        event.target.value = '';
         return;
       }
 
       showToast("⏳ جاري رفع ملف الـ PDF...");
       const reader = new FileReader();
       reader.onload = function(e) {
-        const base64Pdf = e.target.result;
-        db.ref(`groups/${gKey}/pdfData`).set(base64Pdf).then(() => {
-          logActivity(`📖 تم تحديث ملف المراجعة لـ ${groupsConfig[gKey].name}`);
-          showToast("✨ تم رفع ملف الـ PDF المباشر بنجاح!");
-        });
+        const base64Pdf = safeDataUrl(e.target.result, 'data:application/pdf');
+        if (!base64Pdf) {
+          alert("تعذر قراءة ملف الـPDF.");
+          return;
+        }
+
+        db.ref(`groups/${gKey}/pdfData`).set(base64Pdf)
+          .then(() => {
+            logActivity(`📖 تم تحديث ملف المراجعة لـ ${groupsConfig[gKey].name}`);
+            showToast("✨ تم رفع ملف الـ PDF بنجاح!");
+          })
+          .catch(() => {
+            alert("تعذر رفع ملف الـPDF. تأكد من اتصال الإنترنت وصلاحيات Firebase.");
+          });
       };
+      reader.onerror = () => alert("تعذر قراءة ملف الـPDF.");
       reader.readAsDataURL(file);
     }
 
@@ -1516,17 +1611,36 @@
         }
 
         keys.forEach(key => {
-          const item = records[key];
-          container.innerHTML += `
-            <div class="audio-report-card">
-              <div class="bug-report-header">
-                <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span>⏱️ ${item.time}</span>
-              </div>
-              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
-              <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف التسجيل ✕</button>
-            </div>
-          `;
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.textContent = `⏱️ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          const del = document.createElement('button');
+          del.textContent = 'حذف التسجيل ✕';
+          del.style.cssText = 'background:none;border:none;color:var(--danger-color);cursor:pointer;font-size:0.8rem;font-weight:bold;margin-top:8px;';
+          del.addEventListener('click', () => deleteAudioRecord(key));
+
+          card.append(header, audio, del);
+          container.appendChild(card);
         });
       });
 
@@ -1604,8 +1718,10 @@
     }
 
     function deleteAudioRecord(key) {
-      db.ref('audio_records/' + key).remove().then(() => { logActivity("🗑️ تم حذف تسجيل صوتي");
-        showToast("تم حذف التسجيل الصوتي"); });
+      db.ref('audio_records/' + key).remove().then(() => {
+        logActivity("🗑️ تم حذف تسجيل صوتي");
+        showToast("تم حذف التسجيل الصوتي");
+      }).catch(() => alert("تعذر حذف التسجيل."));
     }
 
     function renderTeacherLeaderboard(gKey) {
@@ -1613,19 +1729,28 @@
       if (!list) return;
       list.innerHTML = '';
 
-      teacherState[gKey].forEach((student, index) => {
-        list.innerHTML += `
-          <li class="student-card-item">
-            <span>${student}</span>
-            <button class="btn-danger" style="padding: 2px 8px; font-size:0.8rem;" onclick="removeStudent('${gKey}', ${index})" title="حذف الطالب">حذف 🗑️</button>
-          </li>
-        `;
+      (teacherState[gKey] || []).forEach((student, index) => {
+        const li = document.createElement('li');
+        li.className = 'student-card-item';
+
+        const span = document.createElement('span');
+        span.textContent = safeText(student, MAX_STUDENT_NAME_LENGTH);
+
+        const button = document.createElement('button');
+        button.className = 'btn-danger';
+        button.style.cssText = 'padding:2px 8px;font-size:0.8rem;';
+        button.title = 'حذف الطالب';
+        button.textContent = 'حذف 🗑️';
+        button.addEventListener('click', () => removeStudent(gKey, index));
+
+        li.append(span, button);
+        list.appendChild(li);
       });
     }
 
     function addStudent(gKey) {
       const input = document.getElementById(`add-student-input-${gKey}`);
-      const name = input.value.trim();
+      const name = safeText(input.value, MAX_STUDENT_NAME_LENGTH);
       if (name) {
         if (!teacherState[gKey]) teacherState[gKey] = [];
         teacherState[gKey].push(name);
@@ -1645,7 +1770,7 @@
 
     function submitBugReport(inputId) {
       const textEl = document.getElementById(inputId);
-      const bugText = textEl ? textEl.value.trim() : '';
+      const bugText = textEl ? safeText(textEl.value, MAX_BUG_REPORT_LENGTH) : '';
 
       if (!bugText) {
         alert("يرجى كتابة تفاصيل الخطأ أو المشكلة أولاً!");
@@ -1680,17 +1805,37 @@
         }
 
         keys.forEach(key => {
-          const item = records[key];
-          container.innerHTML += `
-            <div class="audio-report-card" style="border-right-color: var(--gold-accent);">
-              <div class="bug-report-header">
-                <span>👤 الطالب: <strong>${item.studentName}</strong> | 🏷️ <strong>${item.groupName}</strong></span>
-                <span>⏱ ${item.time}</span>
-              </div>
-              <audio controls style="width:100%; margin-top:8px;" src="${item.audioData}"></audio>
-              <button onclick="deleteAudioRecord('${key}')" style="background:none; border:none; color:var(--danger-color); cursor:pointer; font-size:0.8rem; font-weight:bold; margin-top:8px;">حذف من النظام ✕</button>
-            </div>
-          `;
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+          card.style.borderRightColor = 'var(--gold-accent)';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.textContent = `⏱ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          const del = document.createElement('button');
+          del.textContent = 'حذف من النظام ✕';
+          del.style.cssText = 'background:none;border:none;color:var(--danger-color);cursor:pointer;font-size:0.8rem;font-weight:bold;margin-top:8px;';
+          del.addEventListener('click', () => deleteAudioRecord(key));
+
+          card.append(header, audio, del);
+          container.appendChild(card);
         });
       });
 
@@ -1802,20 +1947,38 @@
 
       const gKey = select.value;
       const gData = groupsConfig[gKey];
+      if (!gData) return;
 
       db.ref(`groups/${gKey}`).once('value').then(snapshot => {
         const val = snapshot.val() || {};
         const students = val.leaderboard || [...gData.defaultStudents];
+        container.innerHTML = '';
 
-        container.innerHTML = students.length ? students.map((student, index) => `
-          <div class="student-card-item" style="margin-bottom:7px;">
-            <input id="dev-student-${gKey}-${index}" value="${escapeHtml(student)}"
-              style="flex:1; min-width:120px;"
-              onchange="developerEditStudent(${index}, this.value)">
-            <button class="btn-danger" style="padding:5px 9px; font-size:0.8rem;"
-              onclick="developerDeleteStudent(${index})">حذف 🗑️</button>
-          </div>
-        `).join('') : '<p style="color:var(--text-muted);">لا يوجد طلاب في هذه المجموعة.</p>';
+        if (!students.length) {
+          container.innerHTML = '<p style="color:var(--text-muted);">لا يوجد طلاب في هذه المجموعة.</p>';
+          return;
+        }
+
+        students.forEach((student, index) => {
+          const row = document.createElement('div');
+          row.className = 'student-card-item';
+          row.style.marginBottom = '7px';
+
+          const input = document.createElement('input');
+          input.id = `dev-student-${gKey}-${index}`;
+          input.value = safeText(student, MAX_STUDENT_NAME_LENGTH);
+          input.style.cssText = 'flex:1;min-width:120px;';
+          input.addEventListener('change', () => developerEditStudent(index, input.value));
+
+          const button = document.createElement('button');
+          button.className = 'btn-danger';
+          button.style.cssText = 'padding:5px 9px;font-size:0.8rem;';
+          button.textContent = 'حذف 🗑️';
+          button.addEventListener('click', () => developerDeleteStudent(index));
+
+          row.append(input, button);
+          container.appendChild(row);
+        });
       });
     }
 
@@ -1835,7 +1998,7 @@
     function developerAddStudent() {
       const gKey = getDeveloperSelectedGroup();
       const input = document.getElementById('developer-new-student');
-      const name = input ? input.value.trim() : '';
+      const name = input ? safeText(input.value, MAX_STUDENT_NAME_LENGTH) : '';
       if (!gKey || !name) {
         alert("اكتب اسم الطالب أولاً.");
         return;
@@ -1854,7 +2017,7 @@
 
     function developerEditStudent(index, newValue) {
       const gKey = getDeveloperSelectedGroup();
-      const name = newValue.trim();
+      const name = safeText(newValue, MAX_STUDENT_NAME_LENGTH);
       if (!gKey || !name) {
         alert("اسم الطالب لا يمكن أن يكون فارغاً.");
         loadDeveloperStudents();
@@ -1932,19 +2095,43 @@
       const file = event.target.files[0];
       if (!file) return;
 
+      if (file.size > 20 * 1024 * 1024) {
+        alert("ملف النسخة الاحتياطية كبير جدًا (الحد الأقصى 20 ميجابايت).");
+        event.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           const importedData = JSON.parse(e.target.result);
-          if (confirm("هل أنت متأكد من استعادة هذه النسخة وإعادة كتابة البيانات؟")) {
-            db.ref().set(importedData).then(() => {
+
+          if (!validateBackupShape(importedData)) {
+            alert("النسخة الاحتياطية غير متوافقة مع قاعدة بيانات المنصة.");
+            return;
+          }
+
+          if (!confirm("تحذير: الاستعادة ستستبدل البيانات الحالية. هل تريد المتابعة؟")) {
+            return;
+          }
+
+          db.ref().set(importedData)
+            .then(() => {
               logActivity("♻️ تم استعادة نسخة احتياطية");
               showToast("📤 تم استعادة البيانات بنجاح!");
+            })
+            .catch(() => {
+              alert("تعذر استعادة النسخة الاحتياطية. تحقق من صلاحيات Firebase والاتصال.");
             });
-          }
         } catch (err) {
           alert("خطأ: الملف المرفوع غير صالح أو ليس بتنسيق JSON صحيح.");
+        } finally {
+          event.target.value = '';
         }
+      };
+      reader.onerror = () => {
+        event.target.value = '';
+        alert("تعذر قراءة ملف النسخة الاحتياطية.");
       };
       reader.readAsText(file);
     }
