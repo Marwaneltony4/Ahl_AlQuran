@@ -905,93 +905,6 @@
     .hidden {
       display: none !important;
     }
-
-    /* ===== تصميم التسجيلات الصوتية بألوان المنصة ===== */
-    .audio-groups-list { display: grid; gap: 14px; margin-top: 16px; }
-    .audio-group-section {
-      border: 1px solid var(--border-color);
-      border-right: 5px solid var(--emerald-primary);
-      border-radius: 16px;
-      overflow: hidden;
-      background: var(--card-bg);
-      box-shadow: var(--shadow-sm);
-    }
-    .audio-group-section summary {
-      cursor: pointer;
-      list-style: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 15px 17px;
-      color: var(--emerald-dark);
-      font-weight: 800;
-      background: linear-gradient(110deg, rgba(5,150,105,.10), rgba(217,119,6,.08));
-    }
-    .audio-group-section summary::-webkit-details-marker { display: none; }
-    .audio-group-section summary::after { content: "＋"; color: var(--gold-accent); font-size: 1.1rem; }
-    .audio-group-section[open] summary::after { content: "−"; }
-    .audio-group-count {
-      margin-inline-start: auto;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: var(--emerald-primary);
-      color: #fff;
-      font-size: .78rem;
-      white-space: nowrap;
-    }
-    .audio-group-items { padding: 12px; display: grid; gap: 10px; }
-    .audio-report-card {
-      background: var(--input-bg);
-      border: 1px solid var(--border-color);
-      border-right: 4px solid var(--emerald-primary);
-      border-radius: 13px;
-      padding: 13px;
-      margin: 0;
-      box-shadow: var(--shadow-sm);
-      min-width: 0;
-    }
-    .audio-report-card .audio-record-heading {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
-    }
-    .audio-record-student { color: var(--text-main); font-weight: 800; }
-    .audio-record-time { color: var(--text-muted); font-size: .82rem; }
-    .audio-record-player {
-      display: block; width: 100%; max-width: 100%; height: 44px;
-      margin: 7px 0 10px; border-radius: 999px;
-      accent-color: var(--emerald-primary);
-      color-scheme: light;
-    }
-    body.dark-mode .audio-record-player { color-scheme: dark; }
-    .audio-record-player:focus-visible { outline: 2px solid var(--gold-accent); outline-offset: 3px; }
-    .audio-record-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .audio-download-btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 8px 13px; border-radius: 10px; text-decoration: none;
-      background: var(--gold-accent); color: #fff; border: 1px solid transparent;
-      font-size: .88rem; font-weight: 800; transition: transform .18s ease, filter .18s ease;
-    }
-    .audio-download-btn:hover { filter: brightness(.96); transform: translateY(-1px); }
-    .audio-delete-btn {
-      border: 1px solid rgba(220,38,38,.22); background: rgba(220,38,38,.08);
-      color: var(--danger-color); border-radius: 10px; padding: 8px 12px;
-      font-weight: 700; cursor: pointer;
-    }
-    .audio-empty-state {
-      text-align: center; color: var(--text-muted); padding: 22px 12px;
-      border: 1px dashed var(--border-color); border-radius: 13px;
-    }
-    #audio-player { width: 100%; max-width: 100%; accent-color: var(--emerald-primary); border-radius: 999px; }
-    body.dark-mode #audio-player { color-scheme: dark; }
-    @media (max-width: 600px) {
-      .audio-group-section summary { padding: 12px; }
-      .audio-group-items { padding: 8px; }
-      .audio-report-card { padding: 11px; }
-      .audio-record-player { height: 42px; }
-      .audio-record-actions > * { flex: 1 1 140px; }
-    }
-
   </style>
 </head>
 <body>
@@ -1445,119 +1358,51 @@
       });
     }
 
-
-    // إنشاء واجهة موحدة للتسجيلات، مجمعة حسب المجموعة وبتصميم متناسق.
-    function renderGroupedAudioRecords(containerId, records, options = {}) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      container.innerHTML = '';
-
-      const entries = Object.entries(records || {}).reverse();
-      const validEntries = entries.filter(([key, item]) =>
-        item && typeof item.audioData === 'string' && item.audioData.startsWith('data:audio/')
-      );
-
-      if (!validEntries.length) {
-        const empty = document.createElement('div');
-        empty.className = 'audio-empty-state';
-        empty.textContent = options.emptyText || 'لا توجد تسجيلات صوتية حاليًا.';
-        container.appendChild(empty);
-        return;
-      }
-
-      const grouped = new Map();
-      const configuredNames = Object.values(groupsConfig || {}).map(group => group.name);
-      configuredNames.forEach(name => grouped.set(name, []));
-      validEntries.forEach(([key, item]) => {
-        const groupName = safeText(item.groupName || 'مجموعة غير محددة', 80);
-        if (!grouped.has(groupName)) grouped.set(groupName, []);
-        grouped.get(groupName).push([key, item]);
-      });
-
-      container.classList.add('audio-groups-list');
-
-      grouped.forEach((items, groupName) => {
-        if (!items.length) return;
-        const section = document.createElement('details');
-        section.className = 'audio-group-section';
-        // افتح المجموعة الأولى فقط لتبقى الصفحة مرتبة وغير طويلة.
-        if (container.querySelectorAll('.audio-group-section').length === 0) section.open = true;
-
-        const summary = document.createElement('summary');
-        const title = document.createElement('span');
-        title.textContent = '📂 ' + groupName;
-        const count = document.createElement('span');
-        count.className = 'audio-group-count';
-        count.textContent = `${items.length} تسجيل`;
-        summary.append(title, count);
-
-        const list = document.createElement('div');
-        list.className = 'audio-group-items';
-
-        items.forEach(([key, item]) => {
-          const card = document.createElement('article');
-          card.className = 'audio-report-card';
-
-          const heading = document.createElement('div');
-          heading.className = 'audio-record-heading';
-
-          const student = document.createElement('div');
-          student.className = 'audio-record-student';
-          student.textContent = '🎙️ ' + safeText(item.studentName || 'طالب', MAX_STUDENT_NAME_LENGTH);
-
-          const time = document.createElement('div');
-          time.className = 'audio-record-time';
-          time.textContent = '🕒 ' + safeText(item.time || '', 80);
-          heading.append(student, time);
-
-          const player = document.createElement('audio');
-          player.className = 'audio-record-player';
-          player.controls = true;
-          player.preload = 'none';
-          player.src = item.audioData;
-          player.setAttribute('aria-label', `تشغيل تسجيل ${safeText(item.studentName || 'طالب', MAX_STUDENT_NAME_LENGTH)}`);
-
-          const actions = document.createElement('div');
-          actions.className = 'audio-record-actions';
-
-          const download = document.createElement('a');
-          download.className = 'audio-download-btn';
-          download.href = item.audioData;
-          download.download = `${safeText(item.studentName || 'تسجيل', 60).replace(/[\\/:*?"<>|]/g, '-')}-تسميع.webm`;
-          download.textContent = '⬇️ تحميل التسجيل';
-          actions.appendChild(download);
-
-          if (typeof options.onDelete === 'function') {
-            const del = document.createElement('button');
-            del.type = 'button';
-            del.className = 'audio-delete-btn';
-            del.textContent = options.deleteText || 'حذف التسجيل';
-            del.addEventListener('click', () => options.onDelete(key));
-            actions.appendChild(del);
-          }
-
-          card.append(heading, player, actions);
-          list.appendChild(card);
-        });
-
-        section.append(summary, list);
-        container.appendChild(section);
-      });
-    }
-
     function showPublicAudioPage() {
       document.getElementById('selection-screen').classList.add('hidden');
       document.getElementById('public-audio-screen').classList.remove('hidden');
 
-      db.ref('audio_records').off('value', window.__publicAudioListener);
-      window.__publicAudioListener = (snapshot) => {
-        renderGroupedAudioRecords(
-          'public-audio-list',
-          snapshot.val() || {},
-          { emptyText: 'لا توجد تسجيلات صوتية مسجلة حاليًا.' }
-        );
-      };
-      db.ref('audio_records').on('value', window.__publicAudioListener);
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('public-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مسجلة حالياً.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+          header.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:6px;';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.style.cssText = 'font-size:0.85rem; color:var(--text-muted);';
+          time.textContent = `⏱️ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          card.append(header, audio);
+          container.appendChild(card);
+        });
+      });
     }
 
     function backToSelectionFromAudio() {
@@ -1622,8 +1467,6 @@
             audioBase64Data = reader.result;
             const audioPlayer = document.getElementById('audio-player');
             audioPlayer.src = audioBase64Data;
-            const previewDownload = document.getElementById('audio-preview-download');
-            if (previewDownload) previewDownload.href = audioBase64Data;
             document.getElementById('audio-preview-container').classList.remove('hidden');
           };
         };
@@ -1756,15 +1599,50 @@
         if (input && document.activeElement !== input) input.value = text;
       });
 
-      db.ref('audio_records').off('value', window.__teacherAudioListener);
-      window.__teacherAudioListener = (snapshot) => {
-        renderGroupedAudioRecords('teacher-audio-list', snapshot.val() || {}, {
-          emptyText: 'لا توجد تسجيلات صوتية مرسلة حتى الآن.',
-          deleteText: '🗑️ حذف التسجيل',
-          onDelete: deleteAudioRecord
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('teacher-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مرسلة حتى الآن.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.textContent = `⏱️ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          const del = document.createElement('button');
+          del.textContent = 'حذف التسجيل ✕';
+          del.style.cssText = 'background:none;border:none;color:var(--danger-color);cursor:pointer;font-size:0.8rem;font-weight:bold;margin-top:8px;';
+          del.addEventListener('click', () => deleteAudioRecord(key));
+
+          card.append(header, audio, del);
+          container.appendChild(card);
         });
-      };
-      db.ref('audio_records').on('value', window.__teacherAudioListener);
+      });
 
       const container = document.getElementById('teacher-groups-container');
       container.innerHTML = '';
@@ -1915,15 +1793,51 @@
       document.getElementById('selection-screen').classList.add('hidden');
       document.getElementById('developer-screen').classList.remove('hidden');
 
-      db.ref('audio_records').off('value', window.__developerAudioListener);
-      window.__developerAudioListener = (snapshot) => {
-        renderGroupedAudioRecords('developer-secret-audio-list', snapshot.val() || {}, {
-          emptyText: 'لا توجد تسجيلات صوتية مسجلة حاليًا.',
-          deleteText: '🗑️ حذف من النظام',
-          onDelete: deleteAudioRecord
+      db.ref('audio_records').on('value', (snapshot) => {
+        const records = snapshot.val() || {};
+        const container = document.getElementById('developer-secret-audio-list');
+        container.innerHTML = '';
+
+        const keys = Object.keys(records).reverse();
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا يوجد تسجيلات صوتية مسجلة حالياً.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = records[key] || {};
+          const audioData = safeDataUrl(item.audioData, 'data:audio/');
+          if (!audioData) return;
+
+          const card = document.createElement('div');
+          card.className = 'audio-report-card';
+          card.style.borderRightColor = 'var(--gold-accent)';
+
+          const header = document.createElement('div');
+          header.className = 'bug-report-header';
+
+          const info = document.createElement('span');
+          info.textContent = `👤 الطالب: ${safeText(item.studentName, MAX_STUDENT_NAME_LENGTH)} | 🏷️ ${safeText(item.groupName, 80)}`;
+
+          const time = document.createElement('span');
+          time.textContent = `⏱ ${safeText(item.time, 80)}`;
+
+          header.append(info, time);
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.style.cssText = 'width:100%; margin-top:8px;';
+          audio.src = audioData;
+
+          const del = document.createElement('button');
+          del.textContent = 'حذف من النظام ✕';
+          del.style.cssText = 'background:none;border:none;color:var(--danger-color);cursor:pointer;font-size:0.8rem;font-weight:bold;margin-top:8px;';
+          del.addEventListener('click', () => deleteAudioRecord(key));
+
+          card.append(header, audio, del);
+          container.appendChild(card);
         });
-      };
-      db.ref('audio_records').on('value', window.__developerAudioListener);
+      });
 
       initDeveloperStudentManager();
       initDeveloperActivityLog();
